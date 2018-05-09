@@ -11,10 +11,10 @@
 #### Plataformas suportadas:
 * A calculadora em si suporta apenas a seguinte plataforma:
   * Android 5.0 ou versões posteriores.
-* O Servidor do CalcNet suporta as seguintes plataformas:
+* O Servidor do CalcNet irá suportar as seguintes plataformas:
   * Windows - x86 e x64
   * Linux - x86 e x64
-  * MacOSX - não testado
+  * macOS - não testado *
 
 ### Como compilar
 * Cliente: baixe o Android Studio, abra o projeto e depois clique em 'build'.
@@ -24,6 +24,7 @@
 * 1 - Faça um fork do projeto.
 * 2 - Realize as suas alterações.
 * 3 - Nos envie um pull request, comentado da forma mais detalhada possível.
+* 4 - Pull requests só começarão a ser aceitos a partir do dia 08/07/2018.
 
 ### Detalhes de funcionamento:
 * Primeiramente, os usuários devem se conectar a um roteador propriamente configurado para o CalcNet.
@@ -41,6 +42,7 @@
 ### Características gerais
 * Dispensa cadastro de usuário, e banco de dados.
 * Intuitivo
+* Baixo custo de implementação
 
 ### Desenvolvedores:
 
@@ -48,7 +50,7 @@
 * Lucas Vieira de Jesus -> <lucas.engen.cc@gmail.com>.
 * Christopher Lucas Israel dos Santos -> <dantecreedtutoriais@gmail.com>
 ##### Pesquisa de campo e documentação:
-* Andressa de Fátima Araújo Miranda -> <Andressaaraujo0505@gmail.com>
+* Andressa de Fátima Araújo Miranda -> <andressaaraujo0505@gmail.com>
 * Marcelo José Gomes Leitão -> <marcelomjgl@hotmail.com>
 * Renan Cristyan Araújo Pinheiro -> <rcristyan9@gmail.com>
 
