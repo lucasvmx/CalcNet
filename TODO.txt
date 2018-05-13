@@ -1,0 +1,1 @@
+- Impedir que o aluno feche a calculadora de maneira não proposital

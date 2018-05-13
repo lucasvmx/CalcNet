@@ -16,14 +16,20 @@
   * Linux - x86 e x64
   * macOS - não testado *
 
+### Softwares úteis para o desenvolvimento
+* **Microsoft Visual** Studio: https://www.visualstudio.com/pt-br/downloads
+* **Android Studio**: https://developer.android.com/studio/?hl=pt-br
+* **Git**: https://git-scm.com/downloads
+* **Microsoft Visio**: https://products.office.com/pt-br/visio/flowchart-software?tab=tabs-1
+* 
 ### Como compilar
-* Cliente: baixe o Android Studio, abra o projeto e depois clique em 'build'.
-* Servidor: baixe o Microsoft Visual Studio (2017 de preferência) e clique em 'build project'.
+* **Cliente**: baixe o Android Studio, abra o projeto e depois clique em 'build'.
+* **Servidor**: baixe o Microsoft Visual Studio (2017 de preferência) e clique em 'build project'.
 
 ### Como contribuir
 * 1 - Faça um fork do projeto.
 * 2 - Realize as suas alterações.
-* 3 - Nos envie um pull request, comentado da forma mais detalhada possível.
+* 3 - Nos envie um pull request, comentado da forma mais detalhada possível (em português ou inglês).
 * 4 - Pull requests só começarão a ser aceitos a partir do dia 08/07/2018.
 
 ### Detalhes de funcionamento:
@@ -55,4 +61,5 @@
 * Renan Cristyan Araújo Pinheiro -> <rcristyan9@gmail.com>
 
 ### Referências
-<http://www.wolframalpha.com/> - Expansão em série de potência
+<http://www.wolframalpha.com/> - Expansão em série de potência.
+.
