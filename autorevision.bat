@@ -2,10 +2,10 @@
 :: Script para gerar automaticamente o número de versão do git
 :: Autor: Lucas Vieira de Jesus <lucas.engen.cc@gmail.com>
 
-:: 										***** ATENÇÃO *****
+:: 					***** ATENÇÃO *****
 :: Este script tende a falhar quando executado diretamente do Microsoft Visual Studio 2017 em computadores AMD64
 :: Ao invés de procurar o git na pasta %programfiles% ele procura o git na pasta %programfiles(x86)% mesmo que você
-:: escreve %programfiles% corretamente.
+:: escreva %programfiles% corretamente.
 
 @echo off
 set saida_cs="%cd%\Server\CalcNetServer\Properties\Autorevision.cs"
