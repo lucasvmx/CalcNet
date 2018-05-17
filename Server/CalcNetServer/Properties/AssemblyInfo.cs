@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
-using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Windows;
 
 // As informações gerais sobre um assembly são controladas por
 // conjunto de atributos. Altere estes valores de atributo para modificar as informações
@@ -21,25 +19,8 @@ using System.Windows;
 // COM, defina o atributo ComVisible como true nesse tipo.
 [assembly: ComVisible(false)]
 
-//Para começar a compilar aplicativos localizáveis, configure
-//<UICulture>CultureYouAreCodingWith</UICulture> no seu arquivo .csproj
-//dentro de um <Grupo de Propriedade>.  Por exemplo, se você está usando o idioma inglês
-//nos seus arquivos de origem, configure o <UICulture> para en-US.  Em seguida, descomente
-//o atributo NeutralResourceLanguage abaixo.  Atualize o "en-US" na
-//linha abaixo para coincidir com a configuração do UICulture no arquivo do projeto.
-
-//[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
-
-
-[assembly: ThemeInfo(
-    ResourceDictionaryLocation.None, //onde os dicionários de recursos de temas específicos estão localizados
-                                     //(usado se algum recurso não for encontrado na página,
-                                     // ou dicionários de recursos do aplicativo)
-    ResourceDictionaryLocation.SourceAssembly //onde o dicionário de recursos genéricos está localizado
-                                              //(usado se algum recurso não for encontrado na página,
-                                              // app, ou qualquer outro dicionário de recursos de tema específico)
-)]
-
+// O GUID a seguir será destinado à ID de typelib se este projeto for exposto para COM
+[assembly: Guid("6e7b3fad-eeae-45f4-ac53-5650f11f15a9")]
 
 // As informações da versão de um assembly consistem nos quatro valores a seguir:
 //

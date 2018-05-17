@@ -1,3 +1,5 @@
 *.suo
 .vs*
 obj
+commit.txt
+bin

@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">CalcNet</string>
+    <string name="soma">+</string>
+    <string name="subtracao">-</string>
+    <string name="multiplicacao">*</string>
+    <string name="igual">=</string>
+    <string name="divisao">/</string>
+    <string name="zero">0</string>
+    <string name="um">1</string>
 </resources>

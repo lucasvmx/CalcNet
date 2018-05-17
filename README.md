@@ -23,8 +23,13 @@
 * **Microsoft Visio**: https://products.office.com/pt-br/visio/flowchart-software?tab=tabs-1
 * 
 ### Como compilar
-* **Cliente**: baixe o Android Studio, abra o projeto e depois clique em 'build'.
-* **Servidor**: baixe o Microsoft Visual Studio (2017 de preferência) e clique em 'build project'.
+* **Cliente**: 
+ * Baixe o Android Studio e abra o projeto.
+ * Execute o script autorevision.bat
+ * Volte ao Android Studio e clique em **Build**.
+* **Servidor**:
+ * Baixe o Microsoft Visual Studio (2017 de preferência)
+ * Abra o projeto e depois clique em **Build Project**
 
 ### Como contribuir
 * 1 - Faça um fork do projeto.

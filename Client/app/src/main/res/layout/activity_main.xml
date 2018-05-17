@@ -6,28 +6,76 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.152"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.138" />
-
     <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
+        android:id="@+id/botao_um"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick1"
+        android:text="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.461"
+        app:layout_constraintHorizontal_bias="0.237"
+        app:layout_constraintStart_toEndOf="@+id/botao_multiplicacao"
+        app:layout_constraintTop_toBottomOf="@+id/editText_Math"
+        app:layout_constraintVertical_bias="0.34" />
+
+    <Button
+        android:id="@+id/botao_soma"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:onClick="OnClickMais"
+        android:text="@string/soma"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.572" />
+        app:layout_constraintVertical_bias="0.302" />
+
+    <Button
+        android:id="@+id/botao_divisao"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:onClick="OnClickDivisao"
+        android:text="@string/divisao"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.191"
+        app:layout_constraintStart_toEndOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.43" />
+
+    <Button
+        android:id="@+id/botao_multiplicacao"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:onClick="OnClickIgual"
+        android:text="@string/multiplicacao"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.558" />
+
+    <Button
+        android:id="@+id/botao_subtracao"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:onClick="OnClickMenos"
+        android:text="@string/subtracao"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.004"
+        app:layout_constraintStart_toEndOf="@+id/botao_soma"
+        app:layout_constraintTop_toBottomOf="@+id/editText_Math"
+        app:layout_constraintVertical_bias="0.191" />
+
+    <Button
+        android:id="@+id/botao_igualdade"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:text="@string/igual"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.43" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
@@ -38,6 +86,47 @@
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp" />
+
+    <EditText
+        android:id="@+id/editText_Math"
+        android:layout_width="344dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/botao_soma"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.175"
+        tools:text="Insira..." />
+
+    <Button
+        android:id="@+id/botao_zero"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick0"
+        android:text="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.233"
+        app:layout_constraintStart_toEndOf="@+id/botao_multiplicacao"
+        app:layout_constraintTop_toBottomOf="@+id/editText_Math"
+        app:layout_constraintVertical_bias="0.188" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
