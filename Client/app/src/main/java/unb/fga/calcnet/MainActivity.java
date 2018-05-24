@@ -10,6 +10,7 @@ package unb.fga.calcnet;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Button;
@@ -22,7 +23,7 @@ import java.net.SocketAddress;
 public class MainActivity extends AppCompatActivity
 {
     private Bundle dados;
-    private Socket sock;
+    private Socket sock = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +32,6 @@ public class MainActivity extends AppCompatActivity
         dados = getIntent().getExtras();
 
         sock = (Socket)dados.get("socket");
-    }
-
-    @Override
-    public void onWindowFocusChanged (boolean hasFocus)
-    {
-
     }
 
     public void OnClick(View b)

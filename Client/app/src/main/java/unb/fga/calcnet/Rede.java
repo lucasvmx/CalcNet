@@ -17,6 +17,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import junit.runner.Version;
 
@@ -50,19 +51,20 @@ public class Rede extends AppCompatActivity
     }
 
     @TargetApi(23)
-    public static boolean wifiLigado(Context ctx)
+    public static int wifiLigado(Context ctx)
     {
-        WifiManager wifi = ctx.getSystemService(WifiManager.class);
-        boolean bOn = false;
+        ContentResolver cr = ctx.getContentResolver();
 
-        try {
-            bOn = wifi.isWifiEnabled();
-        } catch(NullPointerException NPE)
-        {
-            NPE.printStackTrace();
-        }
+        if(cr == null)
+            return 2;
 
-        return(bOn);
+        ContentResolver resolver = cr;
+        String config = Settings.Global.WIFI_ON;
+
+        int mState = Settings.Global.getInt(resolver,config,0);
+        Log.v("[wifiLigado]", "int:" + mState);
+
+        return mState;
     }
 
     /* FIXME: Adicionar código para verificar o status do wifi antes da API 23 */

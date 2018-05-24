@@ -2,6 +2,7 @@ package unb.fga.calcnet;
 
 import android.graphics.Color;
 
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +30,7 @@ public class ActivityDadosUsuario extends AppCompatActivity
     private EditText txPorta;
     private TextView txError;
     private Thread connectThread = null;
-    private static boolean isConnected = false;
+    private static volatile boolean isConnected;
 
     Runnable run = new Runnable() {
         @Override
@@ -39,11 +40,11 @@ public class ActivityDadosUsuario extends AppCompatActivity
 
             isConnected = false;
             do {
-                Log.d("[SERVER] ", "Connecting to: " + ip + ":" + porta);
                 s = connectToServer();
             } while(s == null);
 
             isConnected = true;
+            Log.d("[THREAD]", "Fim da thread de conexão");
         }
     };
 
@@ -67,9 +68,11 @@ public class ActivityDadosUsuario extends AppCompatActivity
         try {
             sock = new Socket(ip, porta);
             SocketAddress addr = sock.getRemoteSocketAddress();
+            sock.setSoTimeout(1000);
             sock.connect(addr);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("[ERROR] ", e.getMessage());
+            wait(1000);
         } finally {
             return sock;
         }
@@ -123,7 +126,9 @@ public class ActivityDadosUsuario extends AppCompatActivity
 
             if(!isConnected)
             {
-                if(!Rede.wifiLigado(this.getApplicationContext()))
+                int mWifiState = Rede.wifiLigado(getApplicationContext());
+
+                if(mWifiState == WifiManager.WIFI_STATE_DISABLED || mWifiState == WifiManager.WIFI_STATE_DISABLING)
                     txError.setText("Ative o WiFi");
                 else
                     txError.setText("Você não está conectado ao servidor");
@@ -132,6 +137,8 @@ public class ActivityDadosUsuario extends AppCompatActivity
 
                 txError.setTextColor(Color.BLUE);
                 return;
+            } else {
+                connectThread.interrupt();
             }
 
             this.startActivity(intent);
