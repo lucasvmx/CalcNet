@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/botao_sim"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:onClick="OnClick"
+        android:text="@string/nome_sim"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/botao_nao"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTermos" />
+
+    <Button
+        android:id="@+id/botao_nao"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:onClick="OnClick"
+        android:text="@string/nome_nao"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/botao_sim"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTermos" />
+
+    <TextView
+        android:id="@+id/textViewTermos"
+        android:layout_width="wrap_content"
+        android:layout_height="431dp"
+        android:text="O CalcNet irá monitorar a sua atividade enquanto você o utiliza.\n Para este fim, o seguinte dados serão coletados:\n \t* Endereço MAC de Wifi\n \t* Nome de usuário\n \t* Endereço IP\n\n Você aceita os termos de uso? "
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        app:layout_constraintBottom_toTopOf="@+id/botao_sim"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>

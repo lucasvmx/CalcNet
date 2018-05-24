@@ -7,75 +7,214 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/botao_um"
-        android:layout_width="58dp"
+        android:id="@+id/botao_raiz"
+        android:layout_width="83dp"
         android:layout_height="58dp"
-        android:onClick="OnClick1"
-        android:text="1"
+        android:onClick="OnClick"
+        android:text="@string/raiz_quadrada"
+        tools:layout_editor_absoluteX="43dp"
+        tools:layout_editor_absoluteY="99dp" />
+
+    <Button
+        android:id="@+id/botao_ln"
+        android:layout_width="83dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/logaritmo_neperiano"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="275dp" />
+
+    <Button
+        android:id="@+id/botao_logaritmo"
+        android:layout_width="83dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/logaritmo"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="333dp" />
+
+    <Button
+        android:id="@+id/botao_cubo"
+        android:layout_width="83dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/cubo"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="391dp" />
+
+    <Button
+        android:id="@+id/botao_fatorial"
+        android:layout_width="83dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/fatorial"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="449dp" />
+
+    <Button
+        android:id="@+id/botao_porcento"
+        android:layout_width="83dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/porcento"
+        tools:layout_editor_absoluteX="297dp"
+        tools:layout_editor_absoluteY="217dp" />
+
+    <Button
+        android:id="@+id/botao_fecha_parentese"
+        android:layout_width="102dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/fecha_parentese"
+        tools:layout_editor_absoluteX="185dp"
+        tools:layout_editor_absoluteY="217dp" />
+
+    <Button
+        android:id="@+id/botao_abre_parentese"
+        android:layout_width="84dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/abre_parentese"
+        tools:layout_editor_absoluteX="99dp"
+        tools:layout_editor_absoluteY="217dp" />
+
+    <Button
+        android:id="@+id/botao_igual"
+        android:layout_width="63dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/igual"
+        tools:layout_editor_absoluteX="224dp"
+        tools:layout_editor_absoluteY="449dp" />
+
+    <Button
+        android:id="@+id/botao_decimal"
+        android:layout_width="63dp"
+        android:layout_height="58dp"
+        android:layout_marginBottom="4dp"
+        android:onClick="OnClick"
+        android:text="@string/decimal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.237"
-        app:layout_constraintStart_toEndOf="@+id/botao_multiplicacao"
-        app:layout_constraintTop_toBottomOf="@+id/editText_Math"
-        app:layout_constraintVertical_bias="0.34" />
+        app:layout_constraintEnd_toStartOf="@+id/botao_igual"
+        app:layout_constraintStart_toEndOf="@+id/botao_zero"
+        app:layout_constraintTop_toBottomOf="@+id/botao_dois" />
+
+    <Button
+        android:id="@+id/botao_nove"
+        android:layout_width="63dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/nove"
+        tools:layout_editor_absoluteX="224dp"
+        tools:layout_editor_absoluteY="275dp" />
+
+    <Button
+        android:id="@+id/botao_oito"
+        android:layout_width="63dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/oito"
+        tools:layout_editor_absoluteX="161dp"
+        tools:layout_editor_absoluteY="275dp" />
+
+    <Button
+        android:id="@+id/botao_sete"
+        android:layout_width="63dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/sete"
+        tools:layout_editor_absoluteX="99dp"
+        tools:layout_editor_absoluteY="275dp" />
+
+    <Button
+        android:id="@+id/botao_seis"
+        android:layout_width="63dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/seis"
+        tools:layout_editor_absoluteX="224dp"
+        tools:layout_editor_absoluteY="333dp" />
+
+    <Button
+        android:id="@+id/botao_cinco"
+        android:layout_width="63dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/cinco"
+        tools:layout_editor_absoluteX="161dp"
+        tools:layout_editor_absoluteY="333dp" />
+
+    <Button
+        android:id="@+id/botao_quatro"
+        android:layout_width="63dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/quatro"
+        tools:layout_editor_absoluteX="99dp"
+        tools:layout_editor_absoluteY="333dp" />
+
+    <Button
+        android:id="@+id/botao_tres"
+        android:layout_width="63dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/tres"
+        tools:layout_editor_absoluteX="224dp"
+        tools:layout_editor_absoluteY="391dp" />
+
+    <Button
+        android:id="@+id/botao_dois"
+        android:layout_width="63dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/dois"
+        tools:layout_editor_absoluteX="161dp"
+        tools:layout_editor_absoluteY="391dp" />
+
+    <Button
+        android:id="@+id/botao_um"
+        android:layout_width="63dp"
+        android:layout_height="58dp"
+        android:onClick="OnClick"
+        android:text="@string/um"
+        tools:layout_editor_absoluteX="99dp"
+        tools:layout_editor_absoluteY="391dp" />
 
     <Button
         android:id="@+id/botao_soma"
-        android:layout_width="58dp"
+        android:layout_width="83dp"
         android:layout_height="58dp"
-        android:onClick="OnClickMais"
+        android:onClick="OnClick"
         android:text="@string/soma"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.302" />
+        tools:layout_editor_absoluteX="297dp"
+        tools:layout_editor_absoluteY="449dp" />
 
     <Button
         android:id="@+id/botao_divisao"
-        android:layout_width="58dp"
+        android:layout_width="83dp"
         android:layout_height="58dp"
-        android:onClick="OnClickDivisao"
+        android:onClick="OnClick"
         android:text="@string/divisao"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.191"
-        app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.43" />
+        tools:layout_editor_absoluteX="297dp"
+        tools:layout_editor_absoluteY="275dp" />
 
     <Button
         android:id="@+id/botao_multiplicacao"
-        android:layout_width="58dp"
+        android:layout_width="83dp"
         android:layout_height="58dp"
-        android:onClick="OnClickIgual"
+        android:onClick="OnClick"
         android:text="@string/multiplicacao"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.558" />
+        tools:layout_editor_absoluteX="297dp"
+        tools:layout_editor_absoluteY="333dp" />
 
     <Button
         android:id="@+id/botao_subtracao"
-        android:layout_width="58dp"
+        android:layout_width="83dp"
         android:layout_height="58dp"
-        android:onClick="OnClickMenos"
+        android:onClick="OnClick"
         android:text="@string/subtracao"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.004"
-        app:layout_constraintStart_toEndOf="@+id/botao_soma"
-        app:layout_constraintTop_toBottomOf="@+id/editText_Math"
-        app:layout_constraintVertical_bias="0.191" />
-
-    <Button
-        android:id="@+id/botao_igualdade"
-        android:layout_width="58dp"
-        android:layout_height="58dp"
-        android:text="@string/igual"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.43" />
+        tools:layout_editor_absoluteX="298dp"
+        tools:layout_editor_absoluteY="391dp" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
@@ -93,30 +232,24 @@
 
     <EditText
         android:id="@+id/editText_Math"
-        android:layout_width="344dp"
-        android:layout_height="wrap_content"
+        android:layout_width="352dp"
+        android:layout_height="65dp"
         android:ems="10"
         android:inputType="text"
-        app:layout_constraintBottom_toTopOf="@+id/botao_soma"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.175"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="6dp"
         tools:text="Insira..." />
 
     <Button
         android:id="@+id/botao_zero"
-        android:layout_width="58dp"
+        android:layout_width="63dp"
         android:layout_height="58dp"
-        android:onClick="OnClick0"
-        android:text="0"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.233"
-        app:layout_constraintStart_toEndOf="@+id/botao_multiplicacao"
-        app:layout_constraintTop_toBottomOf="@+id/editText_Math"
-        app:layout_constraintVertical_bias="0.188" />
+        android:onClick="OnClick"
+        android:text="@string/zero"
+        tools:layout_editor_absoluteX="99dp"
+        tools:layout_editor_absoluteY="449dp" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline3"

@@ -1,58 +1,77 @@
+/*
+    MainActivity.java
+    Autor: Lucas Vieira de Jesus
+
+    Este arquivo contém os métodos relacionados com as operacoes na activity MainActivity
+ */
+
 package unb.fga.calcnet;
 
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Button;
 import android.widget.TextView;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.net.SocketAddress;
 
 public class MainActivity extends AppCompatActivity
 {
+    private Bundle dados;
+    private Socket sock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        dados = getIntent().getExtras();
+
+        sock = (Socket)dados.get("socket");
     }
 
-    public void OnClickMenos(View view)
-    {
-        EditText text = findViewById(R.id.editText_Math);
-        text.append(getString(R.string.subtracao));
-    }
-
-    public void OnClickMais(View view)
-    {
-        EditText text = findViewById(R.id.editText_Math);
-        text.append(getString(R.string.soma));
-    }
-
-    public void OnClickVezes(View view)
-    {
-        EditText text = findViewById(R.id.editText_Math);
-        text.append(getString(R.string.multiplicacao));
-    }
-
-    public void OnClickDivisao(View view)
-    {
-        EditText text = findViewById(R.id.editText_Math);
-        text.append(getString(R.string.divisao));
-    }
-
-    public void OnClickIgual(View view)
+    @Override
+    public void onWindowFocusChanged (boolean hasFocus)
     {
 
     }
 
-    public void OnClick0(View view)
+    public void OnClick(View b)
     {
-        EditText text = findViewById(R.id.editText_Math);
-        text.append(getString(R.string.zero));
-    }
+        EditText mathText = findViewById(R.id.editText_Math);
 
-    public void OnClick1(View view)
-    {
-        EditText text = findViewById(R.id.editText_Math);
-        text.append(getString(R.string.um));
+        switch(b.getId())
+        {
+            case R.id.botao_divisao:
+                mathText.append(getString(R.string.divisao));
+                break;
+
+            case R.id.botao_igual:
+                /* Avaliar expressão matemática e realizar o devido cálculo */
+                break;
+
+            case R.id.botao_multiplicacao:
+                mathText.append(getString(R.string.multiplicacao));
+                break;
+
+            case R.id.botao_soma:
+                mathText.append(getString(R.string.soma));
+                break;
+
+            case R.id.botao_subtracao:
+                mathText.append(getString(R.string.subtracao));
+                break;
+
+            case R.id.botao_um:
+                mathText.append(getString(R.string.um));
+                break;
+
+            case R.id.botao_zero:
+                mathText.append(getString(R.string.zero));
+                break;
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
+[using System.IO;
 
 namespace CalcNetServer
 {
@@ -61,10 +62,28 @@ namespace CalcNetServer
         {
             /* usuario é uma classe do tipo TcpClient e por isso precisa ser convertida */
             TcpClient user = usuario as TcpClient;
-            
-            while(user.Connected)
+            NetworkStream userStream;
+            byte[] memoria = new byte[512];
+            int bytes_lidos = 0;
+
+            while (user.Connected)
             {
-                /* Aqui nós realizamos toda a parte de monitoramento de usuário individualmente */
+                /* 
+                    Primeiramente, eu preciso verificar se o cliente enviou um JSON contendo os seguintes dados:
+                    Nome e MAC address
+                */
+
+                userStream = user.GetStream();
+                if(userStream.CanRead)
+                {
+                    try
+                    {
+                        bytes_lidos = userStream.Read(memoria, 0, 512);
+                    } catch(IOException IOE)
+                    {
+                        MessageBox.Show($"Erro ao ler dados:\n\n{IOE.Message}");
+                    }
+                }
             }
         }
     }
