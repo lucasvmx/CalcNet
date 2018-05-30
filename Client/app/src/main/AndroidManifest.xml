@@ -18,7 +18,6 @@
         <activity android:name=".TermosUsoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -27,5 +26,4 @@
         <activity android:name=".ActivityDadosUsuario" android:label="Insira os dados">
         </activity>
     </application>
-
 </manifest>

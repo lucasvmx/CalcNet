@@ -44,6 +44,7 @@ public class TermosUsoActivity extends AppCompatActivity
                 {
                     Intent i = new Intent(this, ActivityDadosUsuario.class);
                     this.startActivity(i);
+                    finish();
                 } else {
                     AlertDialog.Builder alert = new AlertDialog.Builder(this);
                     alert.setTitle("Erro crítico");

@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+    frmMain.cs
+
+    Interação lógica para a janela principal do programa.
+
+    Autor: Lucas Vieira de Jesus
+*/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,11 +17,13 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
+using System.Diagnostics;
 
 namespace CalcNetServer
 {
     public partial class frmMain : Form
     {
+        internal static Logger log;
         internal static string ip = "";
         internal static int porta = -1;
         public static bool temos_ip
@@ -37,24 +47,37 @@ namespace CalcNetServer
             }
         }
 
+        public static int DEBUG = 1;
+        public static int VERBOSE = 2;
+        public static int ERROR = 3;
+        public static int EMPTY = 4;
+        
         /* Variáveis */
         BackgroundWorker serverWorker = null;
-        public static frmMain Log;
+        BackgroundWorker serverStatusWorker = null;
+        public static frmMain fMain;
+        Color defaultForeColor, defaultBackColor;
+        internal static volatile bool bServerIsRunning;
+        internal static volatile bool bStopServer;
 
         /* Aqui o código realmente começa */
 
         public frmMain()
         {
+            log = new Logger();
             InitializeComponent();
-            Text = $"{AutoRevision.VersionInfo.VcsBasename} {AutoRevision.VersionInfo.VcsTag} build {VcsNum}";
+
+            Text = $"{AutoRevision.VersionInfo.VcsBasename} {AutoRevision.VersionInfo.VcsTag} build {AutoRevision.VersionInfo.VcsNum}";
             label_tab1_message1.Text = "";
             label_tab1_message2.Text = "";
 
-            Log = this; /* Necessário para que outro arquivo-fonte acesse a função outputLog definida aqui */
+            fMain = this; /* Necessário para que outro arquivo-fonte acesse a função outputLog definida aqui */
 
             /* Selecionar a porta padrão */
             comboBox_tab1_porta.SelectedIndex = 0;
             porta = Convert.ToInt32(comboBox_tab1_porta.Text);
+
+            log.Write($"Porta escolhida (padrão): {porta}\n");
 
             /* Escolher o endereço de IP padrão */
             IPHostEntry iPHostEntry = Dns.GetHostEntry(Dns.GetHostName());
@@ -69,24 +92,87 @@ namespace CalcNetServer
                 }
             }
 
+            log.Write($"IP escolhido (padrão): {ip_padrao.ToString()}\n");
+
+            bStopServer = false;
+
+            defaultForeColor = richTextBox_output.ForeColor;
+            defaultBackColor = richTextBox_output.BackColor;
+
             textBox_tab1_ip.Text = ip_padrao.ToString();
+
+            serverStatusWorker = new BackgroundWorker();
+            serverStatusWorker.WorkerReportsProgress = false;
+            serverStatusWorker.WorkerSupportsCancellation = true;
+            serverStatusWorker.DoWork += ServerStatusWorker_DoWork;
 
             serverWorker = new BackgroundWorker();
             serverWorker.WorkerReportsProgress = true;
             serverWorker.WorkerSupportsCancellation = true;
             serverWorker.DoWork += ServerWorker_DoWork;
+
+            serverStatusWorker.RunWorkerAsync();
+        }
+
+        private void ServerStatusWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            while(true)
+            {
+                if(bServerIsRunning)
+                {
+                    if (InvokeRequired)
+                    {
+                        try
+                        {
+                            Invoke(new Action(() =>
+                            {
+                                statusStrip1.BackColor = Color.Green;
+                                toolStripStatusLabel1.BackColor = Color.Green;
+                                toolStripStatusLabel1.Text = "Status: online";
+                            }));
+                        } catch(Exception)
+                        {
+                            // TODO: adicionar tratamento de exceção aqui
+                        }
+                    }
+                } else
+                {
+                    if (InvokeRequired)
+                    {
+                        try
+                        {
+                            Invoke(new Action(() =>
+                            {
+                                statusStrip1.BackColor = Color.Red;
+                                toolStripStatusLabel1.BackColor = Color.Red;
+                                toolStripStatusLabel1.Text = "Status: offline";
+                            }));
+                        } catch(Exception)
+                        {
+                            // TODO: adicionar tratamento de exceção aqui
+                        }
+                    }
+                }
+                Thread.Sleep(1000);
+            }
         }
 
         private void ServerWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             /* Este é o código da thread principal de gerenciamento de conexões */
 
-            Connections conexaoServidor = new Connections(ip, porta);
+            Connections conexaoServidor = new Connections();
 
             try
             {
-                OutputLog($"O Servidor do CalcNet está aguardando por usuários em: {ip}:{porta}");
-                conexaoServidor.EscutarConexoes(); // Esta função possui um loop "infinito" dentro dela
+                if (serverWorker.CancellationPending)
+                {
+                    MessageBox.Show("A escuta de conexões foi cancelada", "Informação", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    conexaoServidor.EscutarConexoes(); // Esta função possui um loop "infinito" dentro dela
+                }
             } catch(Exception E)
             {
                 MessageBox.Show("Erro ao inicar escuta de conexões\n\n" + E.Message, "Erro",MessageBoxButtons.OK,MessageBoxIcon.Error);
@@ -159,24 +245,79 @@ namespace CalcNetServer
             /* Iniciamos o servidor */
             try
             {
-                serverWorker.RunWorkerAsync();
+                    serverWorker.RunWorkerAsync();
             } catch(InvalidOperationException IOE)
             {
                 MessageBox.Show("Um erro ocorreu ao iniciar o servidor\n\n" + IOE.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        public void OutputLog(string texto)
+        public void UI_OutputLog(string texto, int tipo)
         {   
             if(!richTextBox_output.InvokeRequired)
             {
+                if (tipo == DEBUG)
+                    richTextBox_output.ForeColor = Color.Yellow;
+                else if (tipo == ERROR)
+                    richTextBox_output.ForeColor = Color.Red;
+                else if (tipo == VERBOSE)
+                    richTextBox_output.ForeColor = Color.White;
+
                 richTextBox_output.Text += texto + "\n";
+                richTextBox_output.ForeColor = DefaultForeColor;
             } else
             {
                 richTextBox_output.Invoke(new Action(() =>
                 {
+                    if (tipo == DEBUG)
+                        richTextBox_output.ForeColor = Color.Yellow;
+                    else if (tipo == ERROR)
+                        richTextBox_output.ForeColor = Color.Red;
+                    else if (tipo == VERBOSE)
+                        richTextBox_output.ForeColor = Color.White;
+                    
                     richTextBox_output.Text += texto + "\n";
+                    richTextBox_output.ForeColor = DefaultForeColor;
                 }));
+            }
+        }
+
+        private void OnBotaoPararServer_Clicked(object sender, EventArgs e)
+        {
+            if (serverWorker.IsBusy)
+            {
+                bStopServer = true;
+                serverWorker.CancelAsync();
+                
+                MessageBox.Show("Aguarde até que o servidor seja terminado", AutoRevision.VersionInfo.VcsBasename, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+            } else
+            {
+                MessageBox.Show("O servidor não está em execução!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void sairToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void OnBotaoExibirLogs_Clicked(object sender, EventArgs e)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo();
+            Process p = new Process();
+
+            try
+            {
+                psi.UseShellExecute = true;
+                psi.FileName = $"notepad.exe";
+                psi.LoadUserProfile = true;
+                psi.Arguments = log.logname;
+
+                p.StartInfo = psi;
+                p.Start();
+            } catch(Exception E)
+            {
+                MessageBox.Show($"Erro ao exibir logs:\n\n{E.Message}", "Um erro ocorreu", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

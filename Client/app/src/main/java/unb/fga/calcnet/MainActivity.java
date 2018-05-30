@@ -25,6 +25,9 @@ public class MainActivity extends AppCompatActivity
     private Bundle dados;
     private Socket sock = null;
 
+    private int n1;
+    private int n2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity
     {
         EditText mathText = findViewById(R.id.editText_Math);
 
+        /* FIXME: falta o botão CLEAR */
         switch(b.getId())
         {
             case R.id.botao_divisao:
@@ -60,12 +64,62 @@ public class MainActivity extends AppCompatActivity
                 mathText.append(getString(R.string.subtracao));
                 break;
 
-            case R.id.botao_um:
-                mathText.append(getString(R.string.um));
-                break;
-
             case R.id.botao_zero:
                 mathText.append(getString(R.string.zero));
+                n1 = 0;
+                break;
+
+            case R.id.botao_um:
+                mathText.append(getString(R.string.um));
+                n1 = 1;
+                break;
+
+            case R.id.botao_dois:
+                mathText.append(getString(R.string.dois));
+                n1 = 2;
+                break;
+
+            case R.id.botao_tres:
+                mathText.append(getString(R.string.tres));
+                n1 = 3;
+                break;
+
+            case R.id.botao_quatro:
+                mathText.append(getString(R.string.quatro));
+                n1 = 4;
+                break;
+
+            case R.id.botao_cinco:
+                mathText.append(getString(R.string.cinco));
+                n1 = 5;
+                break;
+
+            case R.id.botao_seis:
+                mathText.append(getString(R.string.seis));
+                n1 = 6;
+                break;
+
+            case R.id.botao_sete:
+                mathText.append(getString(R.string.sete));
+                n1 = 7;
+                break;
+
+            case R.id.botao_oito:
+                mathText.append(getString(R.string.oito));
+                n1 = 8;
+                break;
+
+            case R.id.botao_nove:
+                mathText.append(getString(R.string.nove));
+                n1 = 9;
+                break;
+
+            case R.id.botao_abre_parentese:
+                //mathText.append(getString(R.string.abre_parentese));
+                break;
+
+            case R.id.botao_fecha_parentese:
+                //.append(getString(R.string.fecha_parentese));
                 break;
         }
     }

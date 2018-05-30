@@ -22,13 +22,16 @@
     <string name="quadrado">x²</string>
     <string name="cubo">x\u00B3</string>
     <string name="potencia_10">10\u207F</string>
-    <string name="arcoseno">sin\u207B\u00B9</string>
+    <string name="seno">sen</string>
+    <string name="cosseno">cos</string>
+    <string name="tangente">tan</string>
+    <string name="arcoseno">sen\u207B\u00B9</string>
     <string name="arcocoseno">cos\u207B\u00B9</string>
     <string name="arcotangente">tan\u207B\u00B9</string>
     <string name="mais_ou_menos">±</string>
     <string name="arrow">↑</string>
     <string name="potencia_x">xⁿ</string>
-    <string name="potencia_e">eⁿ</string>
+    <string name="potencia_e">e\u02e3</string>
     <string name="pi">π</string>
     <string name="fatorial">x!</string>
     <string name="decimal">.</string>
@@ -39,4 +42,7 @@
     <string name="logaritmo_neperiano">ln</string>
     <string name="nome_sim">sim</string>
     <string name="nome_nao">nao</string>
+    <string name="numero_de_euler">e</string>
+    <string name="constante_elev_y">x\u02b8</string>
+    <string name="dez_elev_x">10\u02e3</string>
 </resources>
