@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Seu nome:"
-        android:textAppearance="@android:style/TextAppearance.Material.Large" />
+        android:textAppearance="@android:style/TextAppearance.Material.Large"
+        android:textColor="@android:color/holo_blue_bright" />
 
     <EditText
         android:id="@+id/editTextNome"
@@ -25,7 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Endereço de IP:"
-        android:textAppearance="@android:style/TextAppearance.Material.Large" />
+        android:textAppearance="@android:style/TextAppearance.Material.Large"
+        android:textColor="@android:color/holo_blue_bright" />
 
     <EditText
         android:id="@+id/editTextIp"
@@ -40,7 +42,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Porta de conexão:"
-        android:textAppearance="@android:style/TextAppearance.Material.Large" />
+        android:textAppearance="@android:style/TextAppearance.Material.Large"
+        android:textColor="@android:color/holo_blue_bright" />
 
     <EditText
         android:id="@+id/editTextPorta"
@@ -51,11 +54,12 @@
         android:inputType="number" />
 
     <Button
-        android:id="@+id/botaoOK"
+        android:id="@+id/botaoConectar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="OnClick"
-        android:text="OK" />
+        android:text="CONECTAR"
+        android:textColor="@android:color/holo_blue_bright" />
 
     <TextView
         android:id="@+id/textViewError"

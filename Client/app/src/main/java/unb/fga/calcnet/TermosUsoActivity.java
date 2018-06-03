@@ -7,28 +7,56 @@
 
 package unb.fga.calcnet;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.PermissionChecker;
+import android.util.Log;
 import android.view.View;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.widget.EditText;
-import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
+import android.graphics.Point;
+import android.widget.AbsListView;
+import android.widget.Button;
+import android.widget.AbsListView.LayoutParams;
 
-public class TermosUsoActivity extends AppCompatActivity
+public class TermosUsoActivity extends Activity
 {
+    private Button botaoSim, botaoNao;
+    private ConstraintLayout mainLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_termos_uso);
-        setTitle(autorevision.VCS_BASENAME + " " + autorevision.VCS_TAG);
+        setTitle(autorevision.VCS_BASENAME + " - Termos de uso");
+
+        botaoSim = findViewById(R.id.botao_sim);
+        botaoNao = findViewById(R.id.botao_nao);
+        mainLayout = findViewById(R.id.termosUsoConstraintLayout);
+
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+
+        Common common = new Common(this);
+
+        Log.i("[SIZE]", "Dimensoes: " + ConvertToPoint(mainLayout.getWidth()) + " x " + ConvertToPoint(mainLayout.getHeight()));
+    }
+
+    @Override
+    public void onStop()
+    {
+        Log.e("[WARNING]", "Usuario cometendo fraude");
+        super.onStop();
+    }
+
+    private int ConvertToPoint(double px)
+    {
+        Double pt;
+
+        pt = px * 0.75;
+
+        return pt.intValue();
     }
 
     public void OnClick(View v)

@@ -14,14 +14,19 @@ using System.Windows.Forms;
 using System.IO;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Drawing;
+using System.Media;
 
 namespace CalcNetServer
 {
     class Connections : frmMain
     {
+        private SoundPlayer player = null;
+        string audios_dir = "";
+
         public Connections()
         {
-
+            audios_dir = Environment.CurrentDirectory + "\\audios";
         }
 
         public void EscutarConexoes()
@@ -38,12 +43,12 @@ namespace CalcNetServer
                 throw;
             }
 
+            fMain.UI_OutputLog($"Aguardando conexões no IP {ip} => Porta {porta}",VERBOSE);
             Debug.WriteLine("tcpListener started");
             
 
             while (true)
             {
-                Debug.WriteLine($"bStopServer {bStopServer}");
                 if (bStopServer)
                 {
                     tcpListener.Stop();
@@ -110,6 +115,7 @@ namespace CalcNetServer
                 Application.Exit();
             }
 
+            log.Write($"Usuário conectado: {user.Client.RemoteEndPoint.ToString()}\n");
             userStream = user.GetStream();
             while (user.Connected)
             {
@@ -118,14 +124,23 @@ namespace CalcNetServer
                     Nome e MAC address
                 */
 
-                frmMain.fMain.UI_OutputLog("Usuário online", frmMain.VERBOSE);
-                if(userStream.CanRead)
+                fMain.UI_OutputLog("Usuário online", VERBOSE);
+                if(userStream.CanRead && userStream.DataAvailable)
                 {
                     try
                     {
                         bytes_lidos = userStream.Read(memoria, 0, 512);
                         json_request = bytes_lidos.ToString();
-                        user_data = JsonConvert.DeserializeObject<User>(json_request);
+                        Debug.WriteLine($"json_request: {json_request}");
+
+                        try
+                        {
+                            user_data = JsonConvert.DeserializeObject<User>(json_request);
+                        } catch(Exception e)
+                        {
+                            Debug.WriteLine($"failed to parse json request: {e.Message}");
+                            break;
+                        }
 
                         /* Se chegamos até aqui, então o json enviado está correto */
 
@@ -133,7 +148,7 @@ namespace CalcNetServer
                             Exemplo de JSON:
 
                             "nome"  :   "carlos ferreira",
-                            "mac"   :   "ab:cd:ef:12:34:56",
+                            "serial"   : "200fe766",
                             "ip"    :   "192.168.3.32",
                             "bluetooth" : 0,
                             "modo_aviao" : 1
@@ -141,10 +156,12 @@ namespace CalcNetServer
                             Se modo avião for 0 ou se bluetooth for 1, então o usuário é suspeito
                         */
 
-                        if(user_data.modo_aviao == 0 || user_data.bluetooth == 1)
+                        if (user_data.modo_aviao == 0 || user_data.bluetooth == 1)
                         {
                             /* Usuário está utilizando a calculadora incorretamente */
-                            log.Write($"O usuário {user_data.nome}, {user_data.mac} está utilizando a calculadora incorretamente\n");
+                            log.Write($"O usuário {user_data.nome}, {user_data.serial} está utilizando a calculadora incorretamente\n");
+                            player = new SoundPlayer($"{audios_dir}\\Red Alert-SoundBible.com-108009997.wav");
+                            player.Play();
                         }
                     } catch(IOException IOE)
                     {

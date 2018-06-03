@@ -17,7 +17,7 @@ namespace CalcNetServer
     class User
     {
         public string nome;
-        public string mac;
+        public string serial;
         public string ip;
         public int bluetooth;  /* 0 = desligado, 1 = ligado */
         public int modo_aviao; /* 0 = desligado, 1 = ligado */
@@ -25,7 +25,7 @@ namespace CalcNetServer
         public User()
         {
             nome = "";
-            mac = "";
+            serial = "";
             ip = "";
             bluetooth = -1;
             modo_aviao = -1;

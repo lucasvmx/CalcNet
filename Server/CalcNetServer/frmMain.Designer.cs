@@ -38,6 +38,7 @@
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.metroPanel1 = new MetroFramework.Controls.MetroPanel();
             this.label4 = new System.Windows.Forms.Label();
             this.label_tab1_message2 = new System.Windows.Forms.Label();
             this.textBox_tab1_ip = new System.Windows.Forms.TextBox();
@@ -67,6 +68,7 @@
             this.ajudaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.manualDoUsuárioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sobreOCalcNetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.metroProgressSpinner1 = new MetroFramework.Controls.MetroProgressSpinner();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -202,6 +204,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.metroPanel1);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.label_tab1_message2);
             this.groupBox2.Controls.Add(this.textBox_tab1_ip);
@@ -213,6 +216,19 @@
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Endereço de IP:";
+            // 
+            // metroPanel1
+            // 
+            this.metroPanel1.HorizontalScrollbarBarColor = true;
+            this.metroPanel1.HorizontalScrollbarHighlightOnWheel = false;
+            this.metroPanel1.HorizontalScrollbarSize = 10;
+            this.metroPanel1.Location = new System.Drawing.Point(678, 80);
+            this.metroPanel1.Name = "metroPanel1";
+            this.metroPanel1.Size = new System.Drawing.Size(124, 100);
+            this.metroPanel1.TabIndex = 14;
+            this.metroPanel1.VerticalScrollbarBarColor = true;
+            this.metroPanel1.VerticalScrollbarHighlightOnWheel = false;
+            this.metroPanel1.VerticalScrollbarSize = 10;
             // 
             // label4
             // 
@@ -453,12 +469,13 @@
             // richTextBox_output
             // 
             this.richTextBox_output.BackColor = System.Drawing.Color.White;
+            this.richTextBox_output.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.richTextBox_output.Cursor = System.Windows.Forms.Cursors.Hand;
             this.richTextBox_output.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextBox_output.Font = new System.Drawing.Font("Microsoft JhengHei UI", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.richTextBox_output.ForeColor = System.Drawing.Color.White;
+            this.richTextBox_output.ForeColor = System.Drawing.Color.Red;
             this.richTextBox_output.Location = new System.Drawing.Point(0, 0);
             this.richTextBox_output.Name = "richTextBox_output";
-            this.richTextBox_output.ReadOnly = true;
             this.richTextBox_output.Size = new System.Drawing.Size(672, 368);
             this.richTextBox_output.TabIndex = 0;
             this.richTextBox_output.Text = "";
@@ -509,7 +526,7 @@
             this.sairToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
             this.sairToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.sairToolStripMenuItem.Name = "sairToolStripMenuItem";
-            this.sairToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sairToolStripMenuItem.Size = new System.Drawing.Size(93, 22);
             this.sairToolStripMenuItem.Text = "Sair";
             this.sairToolStripMenuItem.Click += new System.EventHandler(this.sairToolStripMenuItem_Click);
             // 
@@ -528,7 +545,7 @@
             this.manualDoUsuárioToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
             this.manualDoUsuárioToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.manualDoUsuárioToolStripMenuItem.Name = "manualDoUsuárioToolStripMenuItem";
-            this.manualDoUsuárioToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.manualDoUsuárioToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.manualDoUsuárioToolStripMenuItem.Text = "Manual do usuário";
             // 
             // sobreOCalcNetToolStripMenuItem
@@ -536,8 +553,17 @@
             this.sobreOCalcNetToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
             this.sobreOCalcNetToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.sobreOCalcNetToolStripMenuItem.Name = "sobreOCalcNetToolStripMenuItem";
-            this.sobreOCalcNetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sobreOCalcNetToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.sobreOCalcNetToolStripMenuItem.Text = "Sobre o CalcNet";
+            // 
+            // metroProgressSpinner1
+            // 
+            this.metroProgressSpinner1.Location = new System.Drawing.Point(0, 0);
+            this.metroProgressSpinner1.Maximum = 100;
+            this.metroProgressSpinner1.Name = "metroProgressSpinner1";
+            this.metroProgressSpinner1.Size = new System.Drawing.Size(16, 16);
+            this.metroProgressSpinner1.TabIndex = 0;
+            this.metroProgressSpinner1.UseSelectable = true;
             // 
             // frmMain
             // 
@@ -619,9 +645,11 @@
         private System.Windows.Forms.ToolStripMenuItem manualDoUsuárioToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sobreOCalcNetToolStripMenuItem;
         private System.Windows.Forms.TabPage tabPage4;
-        private System.Windows.Forms.RichTextBox richTextBox_output;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
+        private MetroFramework.Controls.MetroPanel metroPanel1;
+        private MetroFramework.Controls.MetroProgressSpinner metroProgressSpinner1;
+        protected System.Windows.Forms.RichTextBox richTextBox_output;
     }
 }
 

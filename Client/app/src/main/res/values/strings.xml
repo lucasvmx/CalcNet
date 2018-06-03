@@ -2,7 +2,7 @@
     <string name="app_name">CalcNet</string>
     <string name="soma">+</string>
     <string name="subtracao">-</string>
-    <string name="multiplicacao">X</string>
+    <string name="multiplicacao">x</string>
     <string name="igual">=</string>
     <string name="divisao">÷</string>
     <string name="zero">0</string>
@@ -45,4 +45,8 @@
     <string name="numero_de_euler">e</string>
     <string name="constante_elev_y">x\u02b8</string>
     <string name="dez_elev_x">10\u02e3</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

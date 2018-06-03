@@ -76,6 +76,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -90,6 +91,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\if_button_cancel_1939.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="imagens\png\if_button_cancel_1939.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="imagens\png\if_check_1930264.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="imagens\png\if_Warning_31226.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

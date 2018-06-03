@@ -2,6 +2,70 @@ package unb.fga.calcnet;
 
 public final class Matematica
 {
+    class Expressao
+    {
+        String mathExpr;
+
+        public Expressao()
+        {
+            mathExpr = "";
+        }
+
+        public Expressao(String expr)
+        {
+            mathExpr = expr;
+        }
+
+        private int countCloseParenthesis()
+        {
+            int count = 0;
+
+            for(char c : mathExpr.toCharArray())
+            {
+                if(c == ')') {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        private int countOpenParenthesis()
+        {
+            int count = 0;
+
+            for(char c : mathExpr.toCharArray())
+            {
+                if(c == '(') {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        private int countNumbers()
+        {
+            // Não implementado ainda
+            return 0;
+        }
+
+        private int countOperators()
+        {
+            // Não implementado ainda
+            return 0;
+        }
+
+        public boolean isValid()
+        {
+            boolean condition = false;
+
+            condition = countOpenParenthesis() == countCloseParenthesis();
+
+            return condition;
+        }
+    };
+
     public static long fatorial(long n)
     {
         long result = 1;

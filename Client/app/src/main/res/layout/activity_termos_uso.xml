@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/termosUsoConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,6 +12,7 @@
         android:layout_height="wrap_content"
         android:onClick="OnClick"
         android:text="@string/nome_sim"
+        android:textColor="@android:color/holo_blue_bright"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/botao_nao"
         app:layout_constraintHorizontal_bias="0.5"
@@ -23,6 +25,7 @@
         android:layout_height="wrap_content"
         android:onClick="OnClick"
         android:text="@string/nome_nao"
+        android:textColor="@android:color/holo_blue_bright"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -33,7 +36,7 @@
         android:id="@+id/textViewTermos"
         android:layout_width="wrap_content"
         android:layout_height="431dp"
-        android:text="O CalcNet irá monitorar a sua atividade enquanto você o utiliza.\n Para este fim, o seguinte dados serão coletados:\n \t* Endereço MAC de Wifi\n \t* Nome de usuário\n \t* Endereço IP\n\n Você aceita os termos de uso? "
+        android:text="O CalcNet irá monitorar a sua atividade enquanto você o utiliza. Para este fim, o seguinte dados serão coletados:\n\t- Endereço MAC de Wifi\n\t- Nome de usuário\n\t- Endereço IP\n\n Você aceita os termos de uso? "
         android:textAppearance="@style/TextAppearance.AppCompat"
         app:layout_constraintBottom_toTopOf="@+id/botao_sim"
         app:layout_constraintEnd_toEndOf="parent"

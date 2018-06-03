@@ -1,34 +1,29 @@
 package unb.fga.calcnet;
 
-import android.accounts.NetworkErrorException;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
-
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.system.ErrnoException;
+import android.telecom.RemoteConnection;
 import android.util.Log;
 import android.view.View;
 import android.content.Intent;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import java.io.IOException;
-import java.net.ConnectException;
 import java.net.InetAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
-import java.net.SocketException;
-import android.system.OsConstants;
 import android.widget.Button;
 
-public class ActivityDadosUsuario extends AppCompatActivity
+public class ActivityDadosUsuario extends Activity
 {
     public static String nome = "";
     public static String ip = "";
     public static int porta = 1701;    /* Porta padrão de conexão */
     public InetAddress ipServidor = null;
+    public static String status = "";
 
     private int CorOriginalBackground = Color.WHITE;
     private int CorOriginalForeground = Color.BLACK;
@@ -48,7 +43,12 @@ public class ActivityDadosUsuario extends AppCompatActivity
         txPorta = findViewById(R.id.editTextPorta);
         txError = findViewById(R.id.textViewError);
 
-        Rede.connThread = new Thread(Rede.networkThread);
+        txPorta.setText("1701");
+        txIp.setText("192.168.0.3");
+        txNome.setText("lucas");
+
+        Rede.ctx = this.getApplicationContext();
+        Rede.netThread = new Thread(Rede.RConnnect);
     }
 
     public void OnClick(View v)
@@ -80,21 +80,17 @@ public class ActivityDadosUsuario extends AppCompatActivity
             return;
         }
 
-        if(v.getId() == R.id.botaoOK)
+        if(v.getId() == R.id.botaoConectar)
         {
-            Intent intent = new Intent(this,MainActivity.class);
-            Bundle b = new Bundle();
-
-            intent.putExtras(b);
-
-            this.startActivity(intent);
-            this.finish();
-            return;
-
-            /*
-            Button button = (Button)findViewById(R.id.botaoOK);
-            if(!Rede.connThread.isAlive())
-                Rede.connThread.start();
+            try {
+                if(Rede.netThread.getState() == Thread.State.NEW)
+                    Rede.execute(Rede.netThread);
+                else
+                    Log.i("[INFO]", "Network thread already running");
+            } catch(Exception e)
+            {
+                e.printStackTrace();
+            }
 
             if(porta <= 0 || porta > 65535)
             {
@@ -112,12 +108,29 @@ public class ActivityDadosUsuario extends AppCompatActivity
                 } else
                     txError.setText("Não foi possível se conectar ao servidor. Tente novamente");
 
-                txError.setTextColor(Color.BLUE);
+                int colors[] = { Color.RED, Color.CYAN, Color.WHITE};
+                int random = (int)(Math.round(Math.random())) % colors.length;
+
+                txError.setTextColor(colors[random]);
                 return;
+            } else
+            {
+                try {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(v.getContext(), R.style.Theme_AppCompat);
+                    dialog.setMessage("Você agora está conectado ao servidor. Aperte em OK ou aguarde alguns segundos ...");
+                    dialog.setTitle("Informação");
+                    dialog.setPositiveButton("OK", null);
+                    dialog.show();
+                } catch(Exception s)
+                {
+                    Log.e("[ERROR]", "Failed to display dialog: " + s.getMessage());
+                }
             }
 
-            Rede.connThread.interrupt();
-            */
+            Intent intent = new Intent(this,MainActivity.class);
+            MainActivity.mainSocket = Rede.netSocket;
+            startActivity(intent);
+            finish();
         }
     }
 }

@@ -55,10 +55,12 @@ namespace CalcNetServer
         /* Variáveis */
         BackgroundWorker serverWorker = null;
         BackgroundWorker serverStatusWorker = null;
-        public static frmMain fMain;
+        protected static volatile frmMain fMain = null;
         Color defaultForeColor, defaultBackColor;
         internal static volatile bool bServerIsRunning;
         internal static volatile bool bStopServer;
+        protected Image okImg;
+        protected Image errImg;
 
         /* Aqui o código realmente começa */
 
@@ -70,9 +72,7 @@ namespace CalcNetServer
             Text = $"{AutoRevision.VersionInfo.VcsBasename} {AutoRevision.VersionInfo.VcsTag} build {AutoRevision.VersionInfo.VcsNum}";
             label_tab1_message1.Text = "";
             label_tab1_message2.Text = "";
-
-            fMain = this; /* Necessário para que outro arquivo-fonte acesse a função outputLog definida aqui */
-
+            
             /* Selecionar a porta padrão */
             comboBox_tab1_porta.SelectedIndex = 0;
             porta = Convert.ToInt32(comboBox_tab1_porta.Text);
@@ -112,6 +112,7 @@ namespace CalcNetServer
             serverWorker.DoWork += ServerWorker_DoWork;
 
             serverStatusWorker.RunWorkerAsync();
+            fMain = this; /* Necessário para que outro arquivo-fonte acesse a função outputLog definida aqui */
         }
 
         private void ServerStatusWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -245,7 +246,7 @@ namespace CalcNetServer
             /* Iniciamos o servidor */
             try
             {
-                    serverWorker.RunWorkerAsync();
+                serverWorker.RunWorkerAsync();
             } catch(InvalidOperationException IOE)
             {
                 MessageBox.Show("Um erro ocorreu ao iniciar o servidor\n\n" + IOE.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -262,8 +263,10 @@ namespace CalcNetServer
                     richTextBox_output.ForeColor = Color.Red;
                 else if (tipo == VERBOSE)
                     richTextBox_output.ForeColor = Color.White;
+                else
+                    richTextBox_output.ForeColor = Color.Lavender;
 
-                richTextBox_output.Text += texto + "\n";
+                richTextBox_output.AppendText($"{texto}\n");
                 richTextBox_output.ForeColor = DefaultForeColor;
             } else
             {
@@ -275,8 +278,10 @@ namespace CalcNetServer
                         richTextBox_output.ForeColor = Color.Red;
                     else if (tipo == VERBOSE)
                         richTextBox_output.ForeColor = Color.White;
-                    
-                    richTextBox_output.Text += texto + "\n";
+                    else
+                        richTextBox_output.ForeColor = Color.Lavender;
+
+                    richTextBox_output.AppendText($"{texto}\n");
                     richTextBox_output.ForeColor = DefaultForeColor;
                 }));
             }
@@ -286,12 +291,12 @@ namespace CalcNetServer
         {
             if (serverWorker.IsBusy)
             {
+                toolStripStatusLabel1.Text = "Parando ...";
                 bStopServer = true;
                 serverWorker.CancelAsync();
-                
-                MessageBox.Show("Aguarde até que o servidor seja terminado", AutoRevision.VersionInfo.VcsBasename, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
             } else
             {
+
                 MessageBox.Show("O servidor não está em execução!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

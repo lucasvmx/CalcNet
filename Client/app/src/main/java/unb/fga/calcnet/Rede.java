@@ -7,45 +7,144 @@
 
 package unb.fga.calcnet;
 
+import android.Manifest;
+import android.Manifest.permission;
 import android.annotation.TargetApi;
-import android.app.ApplicationErrorReport;
+import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.os.*;
-import android.app.*;
+import android.content.pm.PackageManager;
+import android.net.NetworkInfo;
+import android.net.RouteInfo;
+import android.net.wifi.WifiInfo;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-
-import junit.runner.Version;
+import android.content.Context;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.OutputStream;
+import java.net.NetworkInterface;
 import java.net.Socket;
-import java.net.SocketAddress;
+import java.net.SocketException;
+import java.util.Collections;
+import java.util.List;
 
-public class Rede extends AppCompatActivity
+public class Rede extends AsyncTask<String, Void, Boolean>
 {
     public static int MODO_AVIAO_ON = 1;
     public static int MODO_AVIAO_OFF = 0;
     public static Socket netSocket = null;
     public static volatile boolean isConnected = false; /* Flag para armazenar se a calculadora está conectada ao servidor */
-    public static Thread connThread;
+    public static Thread netThread;
+    public static Thread statusThread;
+    public static boolean stopThread = false;
+    public static Context ctx;
 
-    public static Runnable networkThread = new Runnable()
+    @Override
+    protected Boolean doInBackground(String... args)
     {
+        RConnnect.run();
+        return true;
+    }
+
+    public static Runnable RConnected = new Runnable() {
         @Override
         public void run()
         {
-            do
+            for(;;)
             {
-                connectToServer(ActivityDadosUsuario.ip, ActivityDadosUsuario.porta);
-            } while(isConnected == false);
-            Log.d("[networkThread]", "isConnected: " + isConnected);
+                synchronized (this)
+                {
+                    try {
+                        this.wait(2000);
+                    } catch(InterruptedException ie)
+                    {
+                        Log.e("[ERROR]", ie.getMessage());
+                    }
+                }
+
+                if (!isConnected)
+                    ActivityDadosUsuario.status = "Conectando-se ...";
+            }
         }
     };
 
-    /* Retorna true se houve conexão bluetooth ou dados móveis */
+    public static Runnable RConnnect = new Runnable() {
+        @Override
+        public void run()
+        {
+            String sJson = "";
+            JSONObject jsonObject = null;
+
+            while(connectToServer(ActivityDadosUsuario.ip, ActivityDadosUsuario.porta) == null)
+            {
+                try {
+                    synchronized (this) {
+                        this.wait(4000);
+                    }
+                } catch(InterruptedException ie)
+                {
+                    Log.e("[ERROR]", "wait: " + ie.getMessage());
+                }
+            }
+
+            Log.i("[INFO]", "Estamos conectados");
+            Log.i("[SERIAL] ", getSerial(ctx));
+
+            try {
+                netSocket.setKeepAlive(true);
+            } catch(SocketException SE)
+            {
+                SE.printStackTrace();
+            }
+
+            sJson = "{\"nome\":\"" + ActivityDadosUsuario.nome + "\",";
+            sJson += "\"serial\":\"" + getSerial(ctx) + "\",";
+            sJson += "\"ip\":\"" + ActivityDadosUsuario.ip + "\",";
+            sJson += "\"bluetooth\":" + ((bluetoothLigado()) ? 1:0) + ",";
+            sJson += "\"modo_aviao\":" + wifiLigado(ctx) + "}";
+
+            Log.d("[JSON]", sJson);
+
+            try {
+                new JSONObject(sJson);
+
+                Log.d("[DEBUG]", "Objeto JSON criado com sucesso");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                InputStream is = netSocket.getInputStream();
+                OutputStream os = netSocket.getOutputStream();
+
+                byte data[] = new String("lucas").getBytes();
+                os.write(data,0,data.length);
+                Log.d("[WRITE]", "Json enviado ao servidor");
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+                try {
+                    netSocket.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
+            sJson = "sss";
+        }
+    };
+
+    /* Retorna 1 se o modo avião estiver ligado */
     public static int modoAviaoLigado(ContentResolver cr)
     {
         if(cr == null)
@@ -88,25 +187,49 @@ public class Rede extends AppCompatActivity
 
     /* FIXME: Adicionar código para verificar o status do wifi antes da API 23 */
 
-    public static Socket connectToServer(String ip, int porta)
+    public static String getSerial(Context ctx)
     {
-        if(netSocket == null)
+        String serial = "-1";
+
+        try {
+            if(Build.VERSION.SDK_INT == 26) {
+                if(ctx.checkSelfPermission(permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    serial = Build.getSerial();
+                }
+            }
+            else {
+                serial = Build.SERIAL;
+            }
+        } catch(Exception x)
         {
-            try {
-                netSocket = new Socket(ip, porta);
-                SocketAddress addr = netSocket.getRemoteSocketAddress();
-                netSocket.connect(addr, 60);
-            } catch (IOException IE) {
-                Log.e("[ERROR-IE]", "Cannot connect to host: " + IE.getMessage());
-            }
-        } else {
-            if(netSocket.isConnected())
-            {
-                Log.i("[SUCCESS]", "Connected to server");
-                isConnected = true;
-            }
+            Log.e("[ERROR]", x.getMessage());
         }
 
-        return netSocket;
+        return serial;
+    }
+
+    public static Socket connectToServer(String ip, int porta)
+    {
+        try
+        {
+            Log.i("[INFO]", "Criando socket");
+            netSocket = new Socket(ip, porta);
+            Log.i("[INFO]", "Socket criado");
+
+            isConnected = netSocket.isConnected();
+
+            Log.i("[INFO]", "Isconnected: " + isConnected);
+
+            if(netSocket.isConnected())
+                return netSocket;
+
+            //SocketAddress addr = netSocket.getRemoteSocketAddress();
+            //netSocket.connect(addr, 60);
+        } catch (Exception IE) {
+            Log.e("[ERROR-IE]", "Cannot connect to host: " + IE.getMessage());
+            IE.printStackTrace();
+        }
+
+        return null;
     }
 }
