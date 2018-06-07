@@ -9,6 +9,8 @@ package unb.fga.calcnet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Application;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -33,6 +35,7 @@ public class MainActivity extends Activity
     private Button botaoSwitch;
     private DoubleEvaluator dv;
     private Common common;
+    public static volatile boolean MainActivityStopped = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -64,13 +67,40 @@ public class MainActivity extends Activity
     @Override
     public void onBackPressed()
     {
-        common.showMessage("Cuidado","Ao sair, entenderei que você quer fraudar a prova");
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(which == AlertDialog.BUTTON_POSITIVE)
+                {
+                    finishAndRemoveTask();
+                }
+            }
+        });
+        alert.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(which == AlertDialog.BUTTON_NEGATIVE) {
+                    dialog.cancel();
+                }
+            }
+        });
+        alert.setTitle("Cuidado");
+        alert.setMessage("Você quer mesmo sair do aplicativo? Isso pode fazer o aplicador de prova zerar a sua nota");
+        alert.show();
+    }
+
+    @Override
+    public void onPause()
+    {
+        MainActivityStopped = true;
+        super.onPause();
     }
 
     @Override
     public void onStop()
     {
-        Log.e("[WARNING]", "Possível fraude sendo cometida");
+        MainActivityStopped = true;
         super.onStop();
     }
 
@@ -112,17 +142,16 @@ public class MainActivity extends Activity
                 {
                     result = dv.evaluate(text);
 
-                    if(!Double.isNaN(result))
+                    if(Double.isNaN(result))
                     {
-                        resultText.setText(String.valueOf(result));
+                        resultText.setText("Erro");
                     }
                     else if(Double.isInfinite(result))
                     {
-                        resultText.setText("Infinito");
+                        resultText.setText(R.string.infinito);
                     } else {
-                        resultText.setText("Erro");
+                        resultText.setText(String.valueOf(result));
                     }
-
                 } catch(IllegalArgumentException iae)
                 {
                     resultText.setText("Expressão não reconhecida");
@@ -215,7 +244,13 @@ public class MainActivity extends Activity
                         text = new Matematica.Expressao(text,this).corrigir();
                         x = dv.evaluate(text);
                         result = Matematica.exponencial(x);
-                        resultText.setText(String.valueOf(result));
+                        if(Double.isNaN(result)) {
+                            resultText.setText("Erro");
+                        } else if(Double.isInfinite(result)) {
+                            resultText.setText(R.string.infinito);
+                        } else {
+                            resultText.setText(String.valueOf(result));
+                        }
                     } catch(Exception error)
                     {
                         resultText.setText("Erro");
@@ -283,7 +318,7 @@ public class MainActivity extends Activity
                     try {
                         text = new Matematica.Expressao(text, this).corrigir();
                         if(text.contains("i")) {
-                            common.showMessage("Erro", "Sei que sou uma calculadora, mas ainda não trabalho com números complexos");
+                            common.showMessage("Erro", "Sei que sou uma calculadora, mas ainda não trabalho tão bem com números complexos");
                         } else {
                             x = dv.evaluate(text);
                             if (x < 0) {
@@ -411,9 +446,41 @@ public class MainActivity extends Activity
                     try {
                         x = dv.evaluate(text);
                         result = Matematica.fatorial(Math.round(x));
-                        if(x < 0)
-                            resultText.setText("-" + result);
-                        else
+                        if(Double.isNaN(result))
+                        {
+                            resultText.setText("Erro");
+                        } else if(Double.isInfinite(result))
+                        {
+                            resultText.setText(R.string.infinito);
+                        } else {
+                            if (x < 0)
+                                resultText.setText("-" + result);
+                            else
+                                resultText.setText("" + result);
+                        }
+                    } catch(Exception error)
+                    {
+                        resultText.setText("Erro");
+                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
+                    }
+                }
+                break;
+
+            case R.id.botao_x_elevy:
+                mathText.append("^");
+                break;
+
+            case R.id.botaoModulo:
+                dv = new DoubleEvaluator();
+                text = mathText.getText().toString();
+
+                if(!text.isEmpty())
+                {
+                    text = new Matematica.Expressao(text,this).corrigir();
+
+                    try {
+                        x = dv.evaluate(text);
+                        result = Math.abs(x);
                             resultText.setText("" + result);
                     } catch(Exception error)
                     {
@@ -424,7 +491,7 @@ public class MainActivity extends Activity
                 break;
 
             default:
-                common.showMessage("Info", "Não implementado ainda");
+                common.showMessage("Desculpe", "Esta ação ainda não foi implementada");
         }
     }
 }

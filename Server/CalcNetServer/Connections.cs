@@ -33,6 +33,7 @@ namespace CalcNetServer
         {
             audios_dir = Environment.CurrentDirectory + "\\audios";
             fm = frmMain.fMain;
+            users = 0;
         }
 
         public void EscutarConexoes()
@@ -94,9 +95,8 @@ namespace CalcNetServer
 
                             /* Aqui inicia-se o processamento paralelo */
                             sThread.Start();
+                            users++;
                         }
-
-                        users++;
                     }
                     catch (SocketException)
                     {
@@ -127,22 +127,24 @@ namespace CalcNetServer
             user.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
             Thread.Sleep(1000);
 
-            fm.writeLog($"Usuário conectado: {user.Client.RemoteEndPoint.ToString()}\n", frmMain.INFO);
+            fm.writeLog($"Usuário conectado: {user.Client.RemoteEndPoint.ToString()}, id {users}\n", frmMain.INFO);
             frmMain.log.Write($"Usuário conectado: {user.Client.RemoteEndPoint.ToString()}\n");
             frmMain.log.Write($"KeepAlive: {user.Client.GetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive).ToString()}\n");
 
             userStream = user.GetStream();
+            
+
             while (user.Connected)
             {
                 /* 
                     Primeiramente, eu preciso verificar se o cliente enviou um JSON contendo os seguintes dados:
                     Nome e MAC address
                 */
-
+                
                 if (frmMain.bStopServer)
                 {
                     Debug.WriteLine($"Desconectando usuário {user.Client.RemoteEndPoint.ToString()}");
-                    fm.writeLog($"Desconectando usuário {user.Client.RemoteEndPoint.ToString()}",frmMain.INFO);
+                    fm.writeLog($"Desconectando usuário {user.Client.RemoteEndPoint.ToString()}\n",frmMain.INFO);
                     user.Client.Close();
                     users--;
                     break;
@@ -165,9 +167,9 @@ namespace CalcNetServer
                             {
                                 fm.writeLog($"O Ip do usuario {user_data.nome} é: {user_data.ip}\n", frmMain.INFO);
                                 username_showed = true;
-                                fm.addUserToTree(user_data, users - 1);
                             }
-                            Debug.WriteLine($"Modo aviao: {user_data.modo_aviao}\nBluetooth: {user_data.bluetooth}\nNome: {user_data.nome}\nIp: {user_data.ip}\nSerial: {user_data.serial}");
+                            fm.addUserToTree(user_data, users - 1);
+                            Debug.WriteLine($"Modo aviao: {user_data.modo_aviao}\nBluetooth: {user_data.bluetooth}\nNome: {user_data.nome}\nIp: {user_data.ip}\nSerial: {user_data.serial}\nSaiu: {user_data.saiu}\n");
                         } catch(Exception e)
                         {
                             Debug.WriteLine($"failed to parse json request: {e.Message}");
@@ -182,12 +184,13 @@ namespace CalcNetServer
                             "serial"   : "200fe766",
                             "ip"    :   "192.168.3.32",
                             "bluetooth" : 0,
-                            "modo_aviao" : 1
+                            "modo_aviao" : 1,
+                            "saiu": false
 
                             Se modo avião for 0 ou se bluetooth for 1, então o usuário é suspeito
                         */
 
-                        if (user_data.modo_aviao == 0 || user_data.bluetooth == 1)
+                        if (user_data.modo_aviao == 0 || user_data.bluetooth == 1 || user_data.saiu)
                         {
                             /* Usuário está utilizando a calculadora incorretamente */
 

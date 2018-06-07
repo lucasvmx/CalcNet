@@ -55,21 +55,23 @@ public class Common
         return result;
     }
 
-    public int ConvertToPoint(double px)
+    public static double DpToPx(double dp, String density_type)
     {
-        Double pt;
+        Double px = -1.0;
+        Double new_px;
 
-        pt = px * 0.75;
+        switch (density_type)
+        {
+            case "ldpi": px = 0.75; break;
+            case "mdpi": px = 1.0; break;
+            case "tvdpi": px = 1.33; break;
+            case "hdpi": px = 1.50; break;
+            case "xxhdpi": px = 2.0; break;
+            case "xxxhdpi": px = 3.0; break;
+        }
+        new_px = dp * px;
 
-        return pt.intValue();
-    }
-
-    public Point getWindowSize()
-    {
-        Point size = new Point();
-        activity.getWindowManager().getDefaultDisplay().getSize(size);
-
-        return size;
+        return new_px;
     }
 
     public AlertDialog showMessage(String title, String text)

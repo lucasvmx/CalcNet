@@ -45,6 +45,8 @@
     <string name="numero_de_euler">e</string>
     <string name="constante_elev_y">x\u02b8</string>
     <string name="dez_elev_x">10\u02e3</string>
+    <string name="modulo_x">|x|</string>
+    <string name="infinito">\u221e</string>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>

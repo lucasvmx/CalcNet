@@ -69,12 +69,12 @@
             app:layout_row="0" />
 
         <Button
-            android:id="@+id/botao_xelevadoan"
+            android:id="@+id/botao_x_elevy"
             android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
-            android:text="@string/potencia_x"
+            android:text="@string/constante_elev_y"
             android:textAllCaps="false"
             app:layout_column="2"
             app:layout_row="0" />
@@ -419,12 +419,12 @@
             app:layout_row="6" />
 
         <Button
-            android:id="@+id/botao_x_elevy"
+            android:id="@+id/botaoModulo"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
-            android:text="@string/constante_elev_y"
+            android:text="@string/modulo_x"
             android:textAllCaps="false"
             app:layout_column="4"
             app:layout_row="2" />

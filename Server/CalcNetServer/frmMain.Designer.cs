@@ -57,7 +57,6 @@
             this.label11 = new System.Windows.Forms.Label();
             this.label_tab2_ip = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.treeView1 = new System.Windows.Forms.TreeView();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.richTextBox_output = new System.Windows.Forms.RichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -70,6 +69,7 @@
             this.sobreOCalcNetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.metroProgressSpinner1 = new MetroFramework.Controls.MetroProgressSpinner();
             this.gifAlerta = new System.Windows.Forms.PictureBox();
+            this.treeView1 = new System.Windows.Forms.TreeView();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -450,13 +450,6 @@
             this.tabPage3.Text = "3. Dados de monitoramento";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // treeView1
-            // 
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(672, 345);
-            this.treeView1.TabIndex = 0;
-            // 
             // tabPage4
             // 
             this.tabPage4.Controls.Add(this.richTextBox_output);
@@ -477,6 +470,7 @@
             this.richTextBox_output.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.richTextBox_output.Location = new System.Drawing.Point(0, 0);
             this.richTextBox_output.Name = "richTextBox_output";
+            this.richTextBox_output.ReadOnly = true;
             this.richTextBox_output.Size = new System.Drawing.Size(672, 345);
             this.richTextBox_output.TabIndex = 0;
             this.richTextBox_output.Text = "";
@@ -576,6 +570,13 @@
             this.gifAlerta.TabIndex = 14;
             this.gifAlerta.TabStop = false;
             // 
+            // treeView1
+            // 
+            this.treeView1.Location = new System.Drawing.Point(8, 3);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.Size = new System.Drawing.Size(661, 339);
+            this.treeView1.TabIndex = 0;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -636,7 +637,6 @@
         private System.Windows.Forms.ToolStripMenuItem ajudaToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ComboBox comboBox_tab1_porta;
-        private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label_tab1_message2;
         private System.Windows.Forms.TextBox textBox_tab1_ip;
@@ -664,6 +664,7 @@
         private MetroFramework.Controls.MetroProgressSpinner metroProgressSpinner1;
         protected System.Windows.Forms.RichTextBox richTextBox_output;
         internal System.Windows.Forms.PictureBox gifAlerta;
+        private System.Windows.Forms.TreeView treeView1;
     }
 }
 

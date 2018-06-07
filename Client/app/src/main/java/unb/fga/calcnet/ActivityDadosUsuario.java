@@ -39,6 +39,9 @@ public class ActivityDadosUsuario extends Activity
     private EditText txIp;
     private EditText txPorta;
     private TextView txError;
+    private Button botaoConectar;
+    private String botaoConectarTitle;
+    private Common common;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -49,14 +52,16 @@ public class ActivityDadosUsuario extends Activity
         txIp = findViewById(R.id.editTextIp);
         txPorta = findViewById(R.id.editTextPorta);
         txError = findViewById(R.id.textViewError);
+        botaoConectar = findViewById(R.id.botaoConectar);
+        botaoConectarTitle = botaoConectar.getText().toString();
 
         txPorta.setText("1701");
         txIp.setText("192.168.0.3");
-        txNome.setText("lucas");
+        txNome.setText("teste");
 
         Rede.ctx = this.getApplicationContext();
         Rede.netThread = new Thread(Rede.RClient);
-
+        common = new Common(this,this);
     }
 
     public void OnClick(View v)
@@ -90,6 +95,7 @@ public class ActivityDadosUsuario extends Activity
 
         if(v.getId() == R.id.botaoConectar)
         {
+            botaoConectar.setText("CONECTANDO...");
             try {
                 if(Rede.netThread.getState() == Thread.State.NEW)
                     Rede.execute(Rede.netThread);
@@ -97,21 +103,24 @@ public class ActivityDadosUsuario extends Activity
                     Log.i("[INFO]", "Network thread already running");
             } catch(Exception e)
             {
-                e.printStackTrace();
+                Log.e("[ERRO]", e.getMessage());
+                botaoConectar.setText(botaoConectarTitle);
+                return;
             }
 
             if(porta <= 0 || porta > 65535)
             {
                 txError.setTextColor(Color.RED);
                 txError.setText("Porta de conexão inválida");
+                botaoConectar.setText(botaoConectarTitle);
                 return;
             }
 
-            /* Aguarda 2 segundos para verificar se estamos conectados */
+            /* Aguarda 1 segundo para verificar se estamos conectados */
             synchronized (this)
             {
                 try {
-                    wait(2000);
+                    wait(1000);
                 } catch(InterruptedException ie)
                 {
                     Log.e("[ERROR]", ie.getMessage());
@@ -122,16 +131,19 @@ public class ActivityDadosUsuario extends Activity
             {
                 int mWifiState = Rede.wifiLigado(getApplicationContext());
 
-                if(mWifiState == WifiManager.WIFI_STATE_DISABLED || mWifiState == WifiManager.WIFI_STATE_DISABLING) {
-                    txError.setText("Ative o WiFi");
-                } else
-                    txError.setText("Não foi possível se conectar ao servidor. Tente novamente");
+                if(Rede.modoAviaoLigado(getContentResolver()) == Rede.MODO_AVIAO_OFF) {
+                    common.showMessage("Cuidado", "Conectar-se com o modo avião desligado, fará o CalcNet entender que você está utilizando o software incorretamente.");
+                } else {
+                    if (mWifiState == WifiManager.WIFI_STATE_DISABLED)
+                    {
+                        common.showMessage("Erro", "O wifi está desligado");
+                    } else
+                    {
+                        common.showMessage("Erro", "Não foi possível conectar-se ao servidor. Tente novamente");
+                    }
+                }
 
-                int colors[] = { Color.RED, Color.CYAN, Color.WHITE, Color.YELLOW};
-                Random r = new Random();
-                int random = r.nextInt(colors.length);
-
-                txError.setTextColor(colors[random]);
+                botaoConectar.setText(botaoConectarTitle);
                 return;
             }
 

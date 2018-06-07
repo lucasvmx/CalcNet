@@ -21,6 +21,7 @@ namespace CalcNetServer
         public string ip;
         public int bluetooth;  /* 0 = desligado, 1 = ligado */
         public int modo_aviao; /* 0 = desligado, 1 = ligado */
+        public bool saiu;
 
         public User()
         {

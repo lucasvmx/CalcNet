@@ -163,9 +163,7 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         String config = Settings.Global.AIRPLANE_MODE_ON;
 
         Log.i("[AIRPLANE-MODE]", "config is: " + config);
-        int mIsOn = Settings.Global.getInt(resolver,config,0);
-
-        return mIsOn;
+        return(Settings.Global.getInt(resolver,config,0));
     }
 
     /* Retorna true se o bluetooth estiver ligado */
@@ -248,7 +246,8 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         sJson += "\"serial\":\"" + getSerial(ctx) + "\",";
         sJson += "\"ip\":\"" + ActivityDadosUsuario.ip + "\",";
         sJson += "\"bluetooth\":" + ((bluetoothLigado()) ? 1 : 0) + ",";
-        sJson += "\"modo_aviao\":" + modoAviaoLigado(ctx.getContentResolver()) + "}";
+        sJson += "\"modo_aviao\":" + modoAviaoLigado(ctx.getContentResolver()) + ",";
+        sJson += "\"saiu:\":" + MainActivity.MainActivityStopped + "}";
 
         try {
             jsonObject = new JSONObject(sJson);

@@ -357,33 +357,65 @@ namespace CalcNetServer
             }
         }
 
-        public void addUserToTree(User user, int id)
-        {            
-            TreeNode node;
-            node = new TreeNode(user.nome);
-            node.ForeColor = Color.Blue;
+        public void ClearTree()
+        {
+            if(treeView1.InvokeRequired)
+            {
+                treeView1.Invoke(new Action(() =>
+                {
+                    treeView1.Nodes.Clear();
+                }));
+            }
+        }
 
+        public void addUserToTree(User user, int id)
+        {           
             if (treeView1.InvokeRequired)
             {
                 treeView1.Invoke(new Action(() =>
                 {
-                    treeView1.Nodes.Add(node);
-                    node = new TreeNode(user.ip);
-                    node.ForeColor = Color.Magenta;
-                    treeView1.Nodes.Add(node);
-                    node = new TreeNode(user.serial);
-                    node.ForeColor = Color.Magenta;
-                    treeView1.Nodes.Add(node);
+                    try
+                    {
+                        TreeNode[] parents = treeView1.Nodes.Find($"user-{id - 1}", false);
+                        TreeNode parent;
+
+                        if (parents.Length == 1)
+                        {
+                            parent = parents[0];
+                            parent.Nodes[$"user-{id - 1}"].Text = user.nome;
+                            parent.Nodes[$"user-{id - 1}"].Text = user.nome;
+
+                            parent.Nodes.Add($"user-{id - 1}", user.nome);
+                            parent.Nodes[$"user-{id - 1}"].Nodes.Add(user.ip);
+                            parent.Nodes[$"user-{id - 1}"].Nodes.Add((user.modo_aviao == 0) ? "Modo aviao: off" : "Modo aviao: on");
+                            parent.Nodes[$"user-{id - 1}"].Nodes.Add(user.serial);
+                        }
+                        else
+                        {
+                            treeView1.Nodes.Add($"user-{id - 1}", user.nome);
+                            treeView1.Nodes[$"user-{id - 1}"].Nodes.Add(user.ip);
+                            treeView1.Nodes[$"user-{id - 1}"].Nodes.Add((user.modo_aviao == 0) ? "Modo aviao: off" : "Modo aviao: on");
+                            treeView1.Nodes[$"user-{id - 1}"].Nodes.Add(user.serial);
+                        }
+                    } catch(Exception)
+                    {
+
+                    }
+
                 }));
             } else
             {
-                treeView1.Nodes.Add(node);
-                node = new TreeNode(user.ip);
-                node.ForeColor = Color.Magenta;
-                treeView1.Nodes.Add(node);
-                node = new TreeNode(user.serial);
-                node.ForeColor = Color.Magenta;
-                treeView1.Nodes.Add(node);
+                try
+                {
+                    treeView1.Nodes.Add($"user-{id - 1}", user.nome);
+                    treeView1.Nodes[$"user-{id - 1}"].Nodes.Add(user.ip);
+                    treeView1.Nodes[$"user-{id - 1}"].Nodes.Add((user.modo_aviao == 0) ? "Modo aviao: off" : "Modo aviao: on");
+                    treeView1.Nodes[$"user-{id - 1}"].Nodes.Add(user.serial);
+                }
+                catch (Exception)
+                {
+
+                }
             }         
         }
 
