@@ -29,38 +29,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="92e8afdd-51cc-4cea-8734-1d4ae88e9b06" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskJars.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskJars.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/ActivityDadosUsuario.java" afterPath="$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/ActivityDadosUsuario.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/Common.java" afterPath="$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/Common.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/MainActivity.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/Matematica.java" afterPath="$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/Matematica.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/Rede.java" afterPath="$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/Rede.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/TermosUsoActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/TermosUsoActivity.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/autorevision.java" afterPath="$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/autorevision.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_termos_uso.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_termos_uso.xml" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
-      <change beforePath="$PROJECT_DIR$/../Server/CalcNetServer/CalcNetServer.csproj" afterPath="$PROJECT_DIR$/../Server/CalcNetServer/CalcNetServer.csproj" />
-      <change beforePath="$PROJECT_DIR$/../Server/CalcNetServer/Connections.cs" afterPath="$PROJECT_DIR$/../Server/CalcNetServer/Connections.cs" />
-      <change beforePath="$PROJECT_DIR$/../Server/CalcNetServer/Logger.cs" afterPath="$PROJECT_DIR$/../Server/CalcNetServer/Logger.cs" />
-      <change beforePath="$PROJECT_DIR$/../Server/CalcNetServer/Properties/Autorevision.cs" afterPath="$PROJECT_DIR$/../Server/CalcNetServer/Properties/Autorevision.cs" />
-      <change beforePath="$PROJECT_DIR$/../Server/CalcNetServer/Properties/Resources.Designer.cs" afterPath="$PROJECT_DIR$/../Server/CalcNetServer/Properties/Resources.Designer.cs" />
-      <change beforePath="$PROJECT_DIR$/../Server/CalcNetServer/Properties/Resources.resx" afterPath="$PROJECT_DIR$/../Server/CalcNetServer/Properties/Resources.resx" />
-      <change beforePath="$PROJECT_DIR$/../Server/CalcNetServer/User.cs" afterPath="$PROJECT_DIR$/../Server/CalcNetServer/User.cs" />
-      <change beforePath="$PROJECT_DIR$/../Server/CalcNetServer/frmMain.Designer.cs" afterPath="$PROJECT_DIR$/../Server/CalcNetServer/frmMain.Designer.cs" />
-      <change beforePath="$PROJECT_DIR$/../Server/CalcNetServer/frmMain.cs" afterPath="$PROJECT_DIR$/../Server/CalcNetServer/frmMain.cs" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -86,8 +55,8 @@
       <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="205">
-              <caret line="415" column="28" lean-forward="false" selection-start-line="415" selection-start-column="28" selection-end-line="415" selection-end-column="28" />
+            <state relative-caret-position="256">
+              <caret line="418" column="21" lean-forward="true" selection-start-line="418" selection-start-column="21" selection-end-line="418" selection-end-column="21" />
               <folding>
                 <element signature="e#0#14461#0" expanded="true" />
                 <element signature="imports" expanded="true" />
@@ -2277,7 +2246,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="10" />
     <option name="y" value="20" />
     <option name="width" value="1340" />
@@ -2661,7 +2630,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1376" height="744" extended-state="7" />
+    <frame x="-8" y="-8" width="1376" height="744" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32952693" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32952693" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -2683,7 +2653,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.4877651" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Device File Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32978722" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39967373" sideWeight="0.49392098" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39967373" sideWeight="0.49392098" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -3133,8 +3103,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/unb/fga/calcnet/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="415" column="28" lean-forward="false" selection-start-line="415" selection-start-column="28" selection-end-line="415" selection-end-column="28" />
+        <state relative-caret-position="256">
+          <caret line="418" column="21" lean-forward="true" selection-start-line="418" selection-start-column="21" selection-end-line="418" selection-end-column="21" />
           <folding>
             <element signature="e#0#14461#0" expanded="true" />
             <element signature="imports" expanded="true" />
