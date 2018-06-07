@@ -7,17 +7,15 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace CalcNetServer
 {
@@ -47,20 +45,22 @@ namespace CalcNetServer
             }
         }
 
-        public static int DEBUG = 1;
-        public static int VERBOSE = 2;
-        public static int ERROR = 3;
-        public static int EMPTY = 4;
-        
+        public static int OK = 1;
+        public static int ERROR = 2;
+        public static int INFO = 3;
+        public static int WARNING = 4;
+
         /* Variáveis */
+        protected delegate void set_rtf_text(string text);
         BackgroundWorker serverWorker = null;
         BackgroundWorker serverStatusWorker = null;
-        protected static volatile frmMain fMain = null;
+        public static frmMain fMain = null;
         Color defaultForeColor, defaultBackColor;
-        internal static volatile bool bServerIsRunning;
-        internal static volatile bool bStopServer;
+        public static volatile bool bServerIsRunning;
+        public static volatile bool bStopServer;
         protected Image okImg;
         protected Image errImg;
+        internal static PictureBox warningGif = null;
 
         /* Aqui o código realmente começa */
 
@@ -68,6 +68,11 @@ namespace CalcNetServer
         {
             log = new Logger();
             InitializeComponent();
+
+            gifAlerta.Hide();
+
+            fMain = this; /* Necessário para que outro arquivo-fonte acesse a função outputLog definida aqui */
+            warningGif = gifAlerta;
 
             Text = $"{AutoRevision.VersionInfo.VcsBasename} {AutoRevision.VersionInfo.VcsTag} build {AutoRevision.VersionInfo.VcsNum}";
             label_tab1_message1.Text = "";
@@ -112,9 +117,8 @@ namespace CalcNetServer
             serverWorker.DoWork += ServerWorker_DoWork;
 
             serverStatusWorker.RunWorkerAsync();
-            fMain = this; /* Necessário para que outro arquivo-fonte acesse a função outputLog definida aqui */
         }
-
+       
         private void ServerStatusWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             while(true)
@@ -172,11 +176,15 @@ namespace CalcNetServer
                 }
                 else
                 {
+                    bServerIsRunning = false;
+                    bStopServer = false;
                     conexaoServidor.EscutarConexoes(); // Esta função possui um loop "infinito" dentro dela
                 }
             } catch(Exception E)
             {
                 MessageBox.Show("Erro ao inicar escuta de conexões\n\n" + E.Message, "Erro",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                bServerIsRunning = false;
+                bStopServer = true;
             }
         }
 
@@ -246,44 +254,67 @@ namespace CalcNetServer
             /* Iniciamos o servidor */
             try
             {
+                richTextBox_output.ResetText();
                 serverWorker.RunWorkerAsync();
             } catch(InvalidOperationException IOE)
             {
-                MessageBox.Show("Um erro ocorreu ao iniciar o servidor\n\n" + IOE.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Não foi possível iniciar o servidor\n\n" + IOE.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                bStopServer = true;
             }
         }
 
-        public void UI_OutputLog(string texto, int tipo)
-        {   
-            if(!richTextBox_output.InvokeRequired)
-            {
-                if (tipo == DEBUG)
-                    richTextBox_output.ForeColor = Color.Yellow;
-                else if (tipo == ERROR)
-                    richTextBox_output.ForeColor = Color.Red;
-                else if (tipo == VERBOSE)
-                    richTextBox_output.ForeColor = Color.White;
-                else
-                    richTextBox_output.ForeColor = Color.Lavender;
-
-                richTextBox_output.AppendText($"{texto}\n");
-                richTextBox_output.ForeColor = DefaultForeColor;
-            } else
+        public void writeLog(string texto, int type)
+        {
+            if (richTextBox_output.InvokeRequired)
             {
                 richTextBox_output.Invoke(new Action(() =>
                 {
-                    if (tipo == DEBUG)
-                        richTextBox_output.ForeColor = Color.Yellow;
-                    else if (tipo == ERROR)
+                    if (type == ERROR)
+                    {
                         richTextBox_output.ForeColor = Color.Red;
-                    else if (tipo == VERBOSE)
-                        richTextBox_output.ForeColor = Color.White;
-                    else
-                        richTextBox_output.ForeColor = Color.Lavender;
+                        richTextBox_output.Text += "[!] ";
+                    } else if(type == WARNING)
+                    {
+                        richTextBox_output.ForeColor = Color.DarkGoldenrod;
+                        richTextBox_output.Text += "[!] ";
+                    } else if(type == INFO)
+                    {
+                        richTextBox_output.ForeColor = Color.DarkBlue;
+                        richTextBox_output.Text += "[i] ";
+                    } else if(type == OK)
+                    {
+                        richTextBox_output.ForeColor = Color.DarkGreen;
+                        richTextBox_output.Text += "[+] ";
+                    }
 
-                    richTextBox_output.AppendText($"{texto}\n");
-                    richTextBox_output.ForeColor = DefaultForeColor;
+                    richTextBox_output.ForeColor = defaultForeColor;
+                    richTextBox_output.AppendText(texto);
                 }));
+            }
+            else
+            {
+                if (type == ERROR)
+                {
+                    richTextBox_output.ForeColor = Color.Red;
+                    richTextBox_output.Text += "[!] ";
+                }
+                else if (type == WARNING)
+                {
+                    richTextBox_output.ForeColor = Color.DarkGoldenrod;
+                    richTextBox_output.Text += "[!] ";
+                }
+                else if (type == INFO)
+                {
+                    richTextBox_output.ForeColor = Color.DarkBlue;
+                    richTextBox_output.Text += "[i] ";
+                }
+                else if (type == OK)
+                {
+                    richTextBox_output.ForeColor = Color.DarkGreen;
+                    richTextBox_output.Text += "[+] ";
+                }
+
+                richTextBox_output.AppendText(texto);
             }
         }
 
@@ -297,7 +328,7 @@ namespace CalcNetServer
             } else
             {
 
-                MessageBox.Show("O servidor não está em execução!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("O servidor não está em execução", "Informação", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -323,6 +354,67 @@ namespace CalcNetServer
             } catch(Exception E)
             {
                 MessageBox.Show($"Erro ao exibir logs:\n\n{E.Message}", "Um erro ocorreu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void addUserToTree(User user, int id)
+        {            
+            TreeNode node;
+            node = new TreeNode(user.nome);
+            node.ForeColor = Color.Blue;
+
+            if (treeView1.InvokeRequired)
+            {
+                treeView1.Invoke(new Action(() =>
+                {
+                    treeView1.Nodes.Add(node);
+                    node = new TreeNode(user.ip);
+                    node.ForeColor = Color.Magenta;
+                    treeView1.Nodes.Add(node);
+                    node = new TreeNode(user.serial);
+                    node.ForeColor = Color.Magenta;
+                    treeView1.Nodes.Add(node);
+                }));
+            } else
+            {
+                treeView1.Nodes.Add(node);
+                node = new TreeNode(user.ip);
+                node.ForeColor = Color.Magenta;
+                treeView1.Nodes.Add(node);
+                node = new TreeNode(user.serial);
+                node.ForeColor = Color.Magenta;
+                treeView1.Nodes.Add(node);
+            }         
+        }
+
+        public void showWarningGif(bool bShow)
+        {
+            if(gifAlerta.InvokeRequired)
+            {
+                Invoke(new Action(() =>
+                {
+                    if (bShow)
+                    {
+                        if (!gifAlerta.Visible)
+                            gifAlerta.Show();
+                    }
+                    else
+                    {
+                        if (gifAlerta.Visible)
+                            gifAlerta.Hide();
+                    }
+                }));
+            } else {
+                if (bShow)
+                {
+                    if (!gifAlerta.Visible)
+                        gifAlerta.Show();
+                }
+                else
+                {
+                    if(gifAlerta.Visible)
+                        gifAlerta.Hide();
+                }
             }
         }
     }

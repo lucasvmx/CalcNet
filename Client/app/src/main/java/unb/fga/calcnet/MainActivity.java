@@ -14,6 +14,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import java.net.Socket;
@@ -50,7 +52,11 @@ public class MainActivity extends Activity
         botaoSwitch = findViewById(R.id.botaoSwitchRadDeg);
         botaoSwitch.setTextColor(Color.GREEN);
 
-        radianos = true;
+        if(botaoSwitch.getText().toString().equals("Rad"))
+            radianos = true;
+        else
+            radianos = false;
+
         // Adjust items
         mainGrid = findViewById(R.id.mainGrid);
     }
@@ -58,15 +64,21 @@ public class MainActivity extends Activity
     @Override
     public void onBackPressed()
     {
-        common.showMessage("Cuidado","Se você sair, entenderei que você está tentando fraudar a prova!");
-        Log.d("[DEBUG]", "Back pressed");
+        common.showMessage("Cuidado","Ao sair, entenderei que você quer fraudar a prova");
+    }
+
+    @Override
+    public void onStop()
+    {
+        Log.e("[WARNING]", "Possível fraude sendo cometida");
+        super.onStop();
     }
 
     public void OnClick(View b)
     {
         double x;
         double result;
-        String text;
+        String text = "";
 
         switch(b.getId())
         {
@@ -77,25 +89,43 @@ public class MainActivity extends Activity
             case R.id.botao_igual:
                 /* Avaliar expressão matemática e realizar o devido cálculo */
 
+                //text = text.replace(getString(R.string.numero_de_euler),String.valueOf(Matematica.NUMERO_EULER));
+
                 /* Corrigir a expressão matemática */
+
                 text = mathText.getText().toString();
-                mathText.setText(text.replace(getString(R.string.multiplicacao),"*"));
-                text = mathText.getText().toString();
-                mathText.setText(text.replace(getString(R.string.divisao),"/"));
+                text = new Matematica.Expressao(text,this).corrigir();
+
+                if(radianos)
+                {
+                    // Converter o argumento de todos os angulos para radianos
+                } else {
+                    // Converter para graus
+                }
+
+                if(!text.isEmpty()) {
+                    text = text.toLowerCase();
+                    Log.i("[EXPRESSAO]", text);
+                }
 
                 try
                 {
-                    result = dv.evaluate(mathText.getText().toString());
-                    if(!Double.isNaN(result) && !Double.isInfinite(result))
+                    result = dv.evaluate(text);
+
+                    if(!Double.isNaN(result))
                     {
                         resultText.setText(String.valueOf(result));
                     }
-                    else {
-                        resultText.setText("ERROR");
+                    else if(Double.isInfinite(result))
+                    {
+                        resultText.setText("Infinito");
+                    } else {
+                        resultText.setText("Erro");
                     }
+
                 } catch(IllegalArgumentException iae)
                 {
-                    resultText.setText("ERROR");
+                    resultText.setText("Expressão não reconhecida");
                 }
                 break;
 
@@ -176,14 +206,38 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.botao_exp_x:
+                dv = new DoubleEvaluator();
                 text = mathText.getText().toString();
+
                 if(!text.isEmpty())
                 {
-                    x = Double.parseDouble(text);
-                    result = Matematica.exponencial(x);
-                    resultText.setText(String.valueOf(result));
+                    try {
+                        text = new Matematica.Expressao(text,this).corrigir();
+                        x = dv.evaluate(text);
+                        result = Matematica.exponencial(x);
+                        resultText.setText(String.valueOf(result));
+                    } catch(Exception error)
+                    {
+                        resultText.setText("Erro");
+                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
+                    }
                 } else {
                     common.showMessage("Erro", "Insira um número");
+                }
+
+                break;
+
+            case R.id.botaoApagar:
+                String new_text;
+
+                text = mathText.getText().toString();
+                resultText.setText("");
+
+                if(!text.isEmpty())
+                {
+                    new_text = text.substring(0, text.length() - 1);
+                    mathText.setText(new_text);
+                    mathText.setSelection(new_text.length());
                 }
 
                 break;
@@ -219,15 +273,153 @@ public class MainActivity extends Activity
 
             case R.id.botao_raiz:
                 // Calcular a raiz
+                dv = new DoubleEvaluator();
                 text = mathText.getText().toString();
+
                 if(text.isEmpty())
                 {
                     common.showMessage("Erro", "Nenhum número foi inserido");
                 } else {
-                    x = Double.parseDouble(text);
-                    result = Matematica.raiz_quadrada(x);
+                    try {
+                        text = new Matematica.Expressao(text, this).corrigir();
+                        if(text.contains("i")) {
+                            common.showMessage("Erro", "Sei que sou uma calculadora, mas ainda não trabalho com números complexos");
+                        } else {
+                            x = dv.evaluate(text);
+                            if (x < 0) {
+                                x *= -1;
+                                result = Matematica.raiz_quadrada(x);
+                                resultText.setText(result + "i");
+                            } else {
+                                result = Matematica.raiz_quadrada(x);
+                                resultText.setText("" + result);
+                            }
+                        }
+                    } catch(Exception error)
+                    {
+                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
+                        resultText.setText("Erro");
+                    }
+                }
+                break;
 
-                    resultText.setText("" + result);
+            case R.id.botao_dez_elevx:
+                dv = new DoubleEvaluator();
+
+                try
+                {
+                    text = mathText.getText().toString();
+                    if (text.isEmpty())
+                    {
+                        common.showMessage("Erro", "Preciso saber qual é o valor do expoente");
+                    } else {
+                        text = new Matematica.Expressao(text,this).corrigir();
+                        x = dv.evaluate(text);
+
+                        result = Math.pow(10.0, x);
+                        resultText.setText(String.valueOf(result));
+                    }
+                } catch(Exception error)
+                {
+                    common.showMessage("Erro crítico", "Não foi possível realizar esta operação. Tente novamente");
+                    Log.e("[ERROR]", error.getMessage());
+                }
+
+                break;
+
+            case R.id.botao_arcoseno:
+                dv = new DoubleEvaluator();
+                text = mathText.getText().toString();
+
+                if(!text.isEmpty())
+                {
+                    /* Corrige a expressão matemática */
+                    text = new Matematica.Expressao(text,this).corrigir();
+
+                    /* Calcula o resultado da expressão digitada */
+                    try {
+                        x = dv.evaluate(text);
+                        result = Matematica.arcoseno(x);
+                        resultText.setText(String.valueOf(result));
+                    } catch(Exception error)
+                    {
+                        resultText.setText("Erro");
+                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
+                    }
+                }
+                break;
+
+            case R.id.botao_arcocoseno:
+                dv = new DoubleEvaluator();
+                text = mathText.getText().toString();
+                text = new Matematica.Expressao(text,this).corrigir();
+
+                if(!text.isEmpty())
+                {
+                    /* Calcula o resultado da expressão digitada */
+                    x = dv.evaluate(text);
+                    result = Matematica.arcocoseno(x);
+                    resultText.setText(String.valueOf(result));
+                }
+                break;
+
+            case R.id.botao_ln:
+                dv = new DoubleEvaluator();
+                text = mathText.getText().toString();
+                text = new Matematica.Expressao(text,this).corrigir();
+
+                if(!text.isEmpty())
+                {
+                    /* Calcula o resultado da expressão digitada */
+                    x = dv.evaluate(text);
+                    try {
+                        result = Matematica.ln(x);
+                        resultText.setText(String.valueOf(result));
+                    } catch(Exception e) {
+                        common.showMessage("Erro", e.getMessage());
+                    }
+                }
+                break;
+
+            case R.id.botao_log:
+                dv = new DoubleEvaluator();
+                text = mathText.getText().toString();
+
+                if(!text.isEmpty())
+                {
+                    /* Avalia a expressão matemática */
+                    text = new Matematica.Expressao(text,this).corrigir();
+                    /* Calcula o resultado da expressão digitada */
+                    x = dv.evaluate(text);
+                    try {
+                        result = Matematica.logaritmo10(x);
+                        resultText.setText(String.valueOf(result));
+                    } catch(Exception e) {
+                        common.showMessage("Erro", e.getMessage());
+                    }
+                }
+                break;
+
+            case R.id.botao_fatorial:
+                dv = new DoubleEvaluator();
+                text = mathText.getText().toString();
+
+                if(!text.isEmpty())
+                {
+                    text = new Matematica.Expressao(text,this).corrigir();
+
+                    try {
+                        x = dv.evaluate(text);
+                        result = Matematica.fatorial(Math.round(x));
+                        if(x < 0)
+                            resultText.setText("-" + result);
+                        else
+                            resultText.setText("" + result);
+                    } catch(Exception error)
+                    {
+                        resultText.setText("Erro");
+                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
+                    }
                 }
                 break;
 

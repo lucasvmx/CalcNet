@@ -4,6 +4,7 @@
     android:id="@+id/mainGrid"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:keepScreenOn="true"
     app:layout_gravity="fill">
 
     <EditText
@@ -69,7 +70,7 @@
 
         <Button
             android:id="@+id/botao_xelevadoan"
-            android:layout_width="63dp"
+            android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
@@ -91,7 +92,7 @@
 
         <Button
             android:id="@+id/botao_log"
-            android:layout_width="63dp"
+            android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
@@ -189,7 +190,7 @@
 
         <Button
             android:id="@+id/botao_cosseno"
-            android:layout_width="63dp"
+            android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
@@ -231,7 +232,7 @@
 
         <Button
             android:id="@+id/botao_nove"
-            android:layout_width="63dp"
+            android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_green_light"
             android:onClick="OnClick"
@@ -271,7 +272,7 @@
 
         <Button
             android:id="@+id/botao_seis"
-            android:layout_width="63dp"
+            android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_green_light"
             android:onClick="OnClick"
@@ -312,7 +313,7 @@
 
         <Button
             android:id="@+id/botao_tres"
-            android:layout_width="63dp"
+            android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_green_light"
             android:onClick="OnClick"
@@ -352,7 +353,7 @@
 
         <Button
             android:id="@+id/botao_igual"
-            android:layout_width="63dp"
+            android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_orange_dark"
             android:onClick="OnClick"
@@ -400,7 +401,7 @@
             app:layout_row="4" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/botaoApagar"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:onClick="OnClick"
@@ -409,7 +410,7 @@
             app:layout_row="5" />
 
         <Button
-            android:id="@+id/button4"
+            android:id="@+id/button99"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:onClick="OnClick"
@@ -441,7 +442,7 @@
 
         <Button
             android:id="@+id/botao_raiz_cubica"
-            android:layout_width="63dp"
+            android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"

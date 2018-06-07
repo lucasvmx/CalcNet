@@ -69,6 +69,7 @@
             this.manualDoUsuárioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sobreOCalcNetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.metroProgressSpinner1 = new MetroFramework.Controls.MetroProgressSpinner();
+            this.gifAlerta = new System.Windows.Forms.PictureBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -79,6 +80,7 @@
             this.tabPage4.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gifAlerta)).BeginInit();
             this.SuspendLayout();
             // 
             // botaoIniciarServidor
@@ -140,7 +142,7 @@
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(680, 398);
+            this.tabControl1.Size = new System.Drawing.Size(680, 375);
             this.tabControl1.TabIndex = 11;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
@@ -158,7 +160,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 26);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(672, 368);
+            this.tabPage1.Size = new System.Drawing.Size(672, 345);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "1. Configurações";
             // 
@@ -321,7 +323,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 26);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(672, 368);
+            this.tabPage2.Size = new System.Drawing.Size(672, 345);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "2. Dados da sessão";
             // 
@@ -443,17 +445,16 @@
             this.tabPage3.Controls.Add(this.treeView1);
             this.tabPage3.Location = new System.Drawing.Point(4, 26);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(672, 368);
+            this.tabPage3.Size = new System.Drawing.Size(672, 345);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "3. Dados de monitoramento";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // treeView1
             // 
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(672, 368);
+            this.treeView1.Size = new System.Drawing.Size(672, 345);
             this.treeView1.TabIndex = 0;
             // 
             // tabPage4
@@ -461,7 +462,7 @@
             this.tabPage4.Controls.Add(this.richTextBox_output);
             this.tabPage4.Location = new System.Drawing.Point(4, 26);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(672, 368);
+            this.tabPage4.Size = new System.Drawing.Size(672, 345);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "4. Mensagens";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -472,11 +473,11 @@
             this.richTextBox_output.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.richTextBox_output.Cursor = System.Windows.Forms.Cursors.Hand;
             this.richTextBox_output.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox_output.Font = new System.Drawing.Font("Microsoft JhengHei UI", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.richTextBox_output.ForeColor = System.Drawing.Color.Red;
+            this.richTextBox_output.Font = new System.Drawing.Font("Microsoft JhengHei UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richTextBox_output.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.richTextBox_output.Location = new System.Drawing.Point(0, 0);
             this.richTextBox_output.Name = "richTextBox_output";
-            this.richTextBox_output.Size = new System.Drawing.Size(672, 368);
+            this.richTextBox_output.Size = new System.Drawing.Size(672, 345);
             this.richTextBox_output.TabIndex = 0;
             this.richTextBox_output.Text = "";
             // 
@@ -565,6 +566,16 @@
             this.metroProgressSpinner1.TabIndex = 0;
             this.metroProgressSpinner1.UseSelectable = true;
             // 
+            // gifAlerta
+            // 
+            this.gifAlerta.BackgroundImage = global::CalcNetServer.Properties.Resources.gif_alert;
+            this.gifAlerta.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.gifAlerta.Location = new System.Drawing.Point(686, 166);
+            this.gifAlerta.Name = "gifAlerta";
+            this.gifAlerta.Size = new System.Drawing.Size(123, 105);
+            this.gifAlerta.TabIndex = 14;
+            this.gifAlerta.TabStop = false;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -573,6 +584,7 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(822, 455);
+            this.Controls.Add(this.gifAlerta);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.tabControl1);
@@ -602,6 +614,7 @@
             this.statusStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gifAlerta)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -650,6 +663,7 @@
         private MetroFramework.Controls.MetroPanel metroPanel1;
         private MetroFramework.Controls.MetroProgressSpinner metroProgressSpinner1;
         protected System.Windows.Forms.RichTextBox richTextBox_output;
+        internal System.Windows.Forms.PictureBox gifAlerta;
     }
 }
 

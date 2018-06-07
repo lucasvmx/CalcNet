@@ -16,43 +16,57 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Drawing;
 using System.Media;
+using System.Text;
 
 namespace CalcNetServer
 {
-    class Connections : frmMain
+    class Connections
     {
+        public static int MAX_CONNECTIONS = 250;
+
         private SoundPlayer player = null;
         string audios_dir = "";
-
+        private frmMain fm = null;
+        private static int users = 0;
+        
         public Connections()
         {
             audios_dir = Environment.CurrentDirectory + "\\audios";
+            fm = frmMain.fMain;
         }
 
         public void EscutarConexoes()
         {
             TcpClient usuario;
-            TcpListener tcpListener = new TcpListener(IPAddress.Parse(ip), porta);
+            TcpListener tcpListener = new TcpListener(IPAddress.Parse(frmMain.ip), frmMain.porta);
 
             try
             {
                 tcpListener.Start();
-                bServerIsRunning = true;
+                frmMain.bServerIsRunning = true;
             } catch(SocketException)
             {
+                frmMain.bServerIsRunning = false;
                 throw;
             }
 
-            fMain.UI_OutputLog($"Aguardando conexões no IP {ip} => Porta {porta}",VERBOSE);
-            Debug.WriteLine("tcpListener started");
+            fm.writeLog($"Aguardando conexões no IP {frmMain.ip} => Porta {frmMain.porta}\n", frmMain.INFO);
+            Debug.WriteLine($"Aguardando conexões no IP {frmMain.ip} => Porta {frmMain.porta}");
             
-
             while (true)
             {
-                if (bStopServer)
+                if (frmMain.bStopServer)
                 {
-                    tcpListener.Stop();
-                    fMain.UI_OutputLog("A escuta de conexões foi terminada", VERBOSE);
+                    try
+                    {
+                        tcpListener.Server.Close();
+                        tcpListener.Stop();
+                        fm.writeLog("A escuta de conexões foi terminada\n", frmMain.INFO);
+                    } catch(Exception e)
+                    {
+                        fm.writeLog($"{e.Message}",frmMain.ERROR);
+                    }
+                    
                     break;
                 }
 
@@ -60,39 +74,46 @@ namespace CalcNetServer
                 {
                     try
                     {
-                        Debug.WriteLine("Wait for tcpClient");
-                        usuario = tcpListener.AcceptTcpClient();
-                        fMain.UI_OutputLog($"Usuário conectado: {usuario.Client.RemoteEndPoint.ToString()}", frmMain.VERBOSE);
+                        if (users == 250)
+                        {
+                            MessageBox.Show("A quantidade máxima de usuários simultâneos já foi atingida");
+                        }
+                        else
+                        {
+                            usuario = tcpListener.AcceptTcpClient();
+
+                            /* Para cada cliente conectado, é necessário fazer um processamento paralelo */
+
+                            Thread sThread = new Thread(unused =>
+                            {
+                                GerenciarConexao(usuario, users);
+                            })
+                            {
+                                IsBackground = true
+                            };
+
+                            /* Aqui inicia-se o processamento paralelo */
+                            sThread.Start();
+                        }
+
+                        users++;
                     }
                     catch (SocketException)
                     {
                         throw;
                     }
-
-
-                    /* Para cada cliente conectado, é necessário fazer um processamento paralelo */
-
-                    Thread sThread = new Thread(new ParameterizedThreadStart(GerenciarConexao))
-                    {
-                        IsBackground = true
-                    };
-
-                    try
-                    {
-                        sThread.Start(usuario);
-                    }
-                    catch (OutOfMemoryException)
+                    catch(OutOfMemoryException)
                     {
                         throw;
                     }
                 }
             }
 
-            bServerIsRunning = false;
-            bStopServer = false;
+            frmMain.bServerIsRunning = false;
+            frmMain.bStopServer = false;
         }
 
-        private void GerenciarConexao(object usuario)
+        private void GerenciarConexao(object usuario, int id)
         {
             /* usuario é uma classe do tipo TcpClient e por isso precisa ser convertida */
             TcpClient user = usuario as TcpClient;
@@ -101,21 +122,15 @@ namespace CalcNetServer
             int bytes_lidos = 0;
             string json_request = "";
             User user_data = null;
+            bool username_showed = false;
 
-            try
-            {
-                user.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-            } catch(SocketException SE)
-            {
-                MessageBox.Show($"Falha ao mudar flag de conexão:\n\n{SE.Message}", "Erro crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Application.Exit();
-            } catch(ObjectDisposedException ODE)
-            {
-                MessageBox.Show($"Falha ao mudar flag de conexão:\n\n{ODE.Message}", "Erro crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Application.Exit();
-            }
+            user.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+            Thread.Sleep(1000);
 
-            log.Write($"Usuário conectado: {user.Client.RemoteEndPoint.ToString()}\n");
+            fm.writeLog($"Usuário conectado: {user.Client.RemoteEndPoint.ToString()}\n", frmMain.INFO);
+            frmMain.log.Write($"Usuário conectado: {user.Client.RemoteEndPoint.ToString()}\n");
+            frmMain.log.Write($"KeepAlive: {user.Client.GetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive).ToString()}\n");
+
             userStream = user.GetStream();
             while (user.Connected)
             {
@@ -124,22 +139,38 @@ namespace CalcNetServer
                     Nome e MAC address
                 */
 
-                fMain.UI_OutputLog("Usuário online", VERBOSE);
+                if (frmMain.bStopServer)
+                {
+                    Debug.WriteLine($"Desconectando usuário {user.Client.RemoteEndPoint.ToString()}");
+                    fm.writeLog($"Desconectando usuário {user.Client.RemoteEndPoint.ToString()}",frmMain.INFO);
+                    user.Client.Close();
+                    users--;
+                    break;
+                }
+
                 if(userStream.CanRead && userStream.DataAvailable)
                 {
                     try
                     {
                         bytes_lidos = userStream.Read(memoria, 0, 512);
-                        json_request = bytes_lidos.ToString();
-                        Debug.WriteLine($"json_request: {json_request}");
+
+                        json_request = Encoding.ASCII.GetString(memoria);
 
                         try
                         {
                             user_data = JsonConvert.DeserializeObject<User>(json_request);
+                            user_data.ip = user.Client.RemoteEndPoint.ToString();
+
+                            if (!username_showed)
+                            {
+                                fm.writeLog($"O Ip do usuario {user_data.nome} é: {user_data.ip}\n", frmMain.INFO);
+                                username_showed = true;
+                                fm.addUserToTree(user_data, users - 1);
+                            }
+                            Debug.WriteLine($"Modo aviao: {user_data.modo_aviao}\nBluetooth: {user_data.bluetooth}\nNome: {user_data.nome}\nIp: {user_data.ip}\nSerial: {user_data.serial}");
                         } catch(Exception e)
                         {
                             Debug.WriteLine($"failed to parse json request: {e.Message}");
-                            break;
                         }
 
                         /* Se chegamos até aqui, então o json enviado está correto */
@@ -159,18 +190,23 @@ namespace CalcNetServer
                         if (user_data.modo_aviao == 0 || user_data.bluetooth == 1)
                         {
                             /* Usuário está utilizando a calculadora incorretamente */
-                            log.Write($"O usuário {user_data.nome}, {user_data.serial} está utilizando a calculadora incorretamente\n");
+
+                            fm.writeLog($"O usuário {user_data.nome}, {user_data.serial} está utilizando a calculadora incorretamente.\n", frmMain.ERROR);                           
+                            frmMain.log.Write($"O usuário {user_data.nome}, {user_data.serial} está utilizando a calculadora incorretamente\n");
+                            fm.showWarningGif(true);
                             player = new SoundPlayer($"{audios_dir}\\Red Alert-SoundBible.com-108009997.wav");
                             player.Play();
+                        } else
+                        {
+                            fm.showWarningGif(false);
                         }
                     } catch(IOException IOE)
                     {
-                        MessageBox.Show($"Erro ao ler dados:\n\n{IOE.Message}");
+                        Debug.WriteLine($"Erro ao ler dados:\n\n{IOE.Message}\n");
+                        frmMain.log.Write($"Erro ao ler dados:\n\n{IOE.Message}\n");
                     }
                 }
             }
-
-            fMain.UI_OutputLog($"O Aluno do endereço {user.Client.RemoteEndPoint.ToString()} se desconectou", ERROR);
         }
     }
 }

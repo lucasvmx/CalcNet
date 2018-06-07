@@ -35,28 +35,7 @@ public class TermosUsoActivity extends Activity
         botaoNao = findViewById(R.id.botao_nao);
         mainLayout = findViewById(R.id.termosUsoConstraintLayout);
 
-        Point size = new Point();
-        getWindowManager().getDefaultDisplay().getSize(size);
-
         Common common = new Common(this);
-
-        Log.i("[SIZE]", "Dimensoes: " + ConvertToPoint(mainLayout.getWidth()) + " x " + ConvertToPoint(mainLayout.getHeight()));
-    }
-
-    @Override
-    public void onStop()
-    {
-        Log.e("[WARNING]", "Usuario cometendo fraude");
-        super.onStop();
-    }
-
-    private int ConvertToPoint(double px)
-    {
-        Double pt;
-
-        pt = px * 0.75;
-
-        return pt.intValue();
     }
 
     public void OnClick(View v)

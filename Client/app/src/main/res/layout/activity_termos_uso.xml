@@ -36,7 +36,7 @@
         android:id="@+id/textViewTermos"
         android:layout_width="wrap_content"
         android:layout_height="431dp"
-        android:text="O CalcNet irá monitorar a sua atividade enquanto você o utiliza. Para este fim, o seguinte dados serão coletados:\n\t- Endereço MAC de Wifi\n\t- Nome de usuário\n\t- Endereço IP\n\n Você aceita os termos de uso? "
+        android:text="Este software irá monitorar a sua atividade enquanto você o utiliza. Para este fim, o seguinte dados serão coletados:\n\n- Número de série do seu telefone\n- Nome de usuário\n- Endereço IP\n\nO CalcNet coletará algumas informaões periodicamente e enviará ao aplicador de prova para que ele saiba se você realmente está usando a calculadora (em tempo real) .\nPor favor, seja honesto ao utilizar esta ferramenta criada para o nosso benefício (professores e alunos). Evite constrangimentos...\n\nO que você não deve fazer em hipótese alguma:\n- Desligar o wifi.\n- Desligar o modo avião.\n- Sair do calcnet.\n- Fornecer um nome de usuário falso\n- Desligar a tela do seu smartphone.\n\nVocê aceita os termos de uso? "
         android:textAppearance="@style/TextAppearance.AppCompat"
         app:layout_constraintBottom_toTopOf="@+id/botao_sim"
         app:layout_constraintEnd_toEndOf="parent"

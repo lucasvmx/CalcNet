@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.telecom.RemoteConnection;
@@ -16,6 +19,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import java.net.InetAddress;
 import android.widget.Button;
+
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Random;
 
 public class ActivityDadosUsuario extends Activity
 {
@@ -48,7 +55,8 @@ public class ActivityDadosUsuario extends Activity
         txNome.setText("lucas");
 
         Rede.ctx = this.getApplicationContext();
-        Rede.netThread = new Thread(Rede.RConnnect);
+        Rede.netThread = new Thread(Rede.RClient);
+
     }
 
     public void OnClick(View v)
@@ -99,6 +107,17 @@ public class ActivityDadosUsuario extends Activity
                 return;
             }
 
+            /* Aguarda 2 segundos para verificar se estamos conectados */
+            synchronized (this)
+            {
+                try {
+                    wait(2000);
+                } catch(InterruptedException ie)
+                {
+                    Log.e("[ERROR]", ie.getMessage());
+                }
+            }
+
             if(!Rede.isConnected)
             {
                 int mWifiState = Rede.wifiLigado(getApplicationContext());
@@ -108,23 +127,12 @@ public class ActivityDadosUsuario extends Activity
                 } else
                     txError.setText("Não foi possível se conectar ao servidor. Tente novamente");
 
-                int colors[] = { Color.RED, Color.CYAN, Color.WHITE};
-                int random = (int)(Math.round(Math.random())) % colors.length;
+                int colors[] = { Color.RED, Color.CYAN, Color.WHITE, Color.YELLOW};
+                Random r = new Random();
+                int random = r.nextInt(colors.length);
 
                 txError.setTextColor(colors[random]);
                 return;
-            } else
-            {
-                try {
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(v.getContext(), R.style.Theme_AppCompat);
-                    dialog.setMessage("Você agora está conectado ao servidor. Aperte em OK ou aguarde alguns segundos ...");
-                    dialog.setTitle("Informação");
-                    dialog.setPositiveButton("OK", null);
-                    dialog.show();
-                } catch(Exception s)
-                {
-                    Log.e("[ERROR]", "Failed to display dialog: " + s.getMessage());
-                }
             }
 
             Intent intent = new Intent(this,MainActivity.class);

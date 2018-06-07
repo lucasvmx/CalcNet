@@ -17,7 +17,7 @@ namespace CalcNetServer
     class Logger
     {
         internal string logname = "";
-        private string extensao = "cnl";   /* calcnet log */
+        private string extensao = "log";   /* calcnet log */
         private Encoding systemEncoding;
         private string logs_dirname = "logs";
 
@@ -28,7 +28,7 @@ namespace CalcNetServer
             if (!Directory.Exists(logs_dirname))
                 Directory.CreateDirectory(logs_dirname);
 
-            logname = $"{logs_dirname}\\calcnet_log_{DateTime.Now.Day}{DateTime.Now.Year}{DateTime.Now.Month}{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}.{extensao}";
+            logname = $"{logs_dirname}\\calcnet_log_{DateTime.Now.Day}-{DateTime.Now.Month}-{DateTime.Now.Year}-{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}.{extensao}";
             if(!File.Exists(logname))
                 File.WriteAllText(logname, $"Arquivo de Log - {VersionInfo.VcsBasename} {VersionInfo.VcsTag} build {VersionInfo.VcsNum}\nCodificação: {systemEncoding.EncodingName}\n\n");
         }

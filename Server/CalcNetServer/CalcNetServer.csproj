@@ -104,6 +104,9 @@
   <ItemGroup>
     <None Include="imagens\png\if_Warning_31226.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="imagens\gif\gif-alert.gif" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>cd $(ProjectDir)..\..\ &amp;&amp; autorevision.bat</PreBuildEvent>

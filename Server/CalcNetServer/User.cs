@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace CalcNetServer
 {
-    class User
+    public class User
     {
         public string nome;
         public string serial;

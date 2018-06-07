@@ -1,19 +1,37 @@
 package unb.fga.calcnet;
 
+import android.app.Activity;
+
 public final class Matematica
 {
-    class Expressao
+    public static final double PI = 3.1415926536;
+    public static final double NUMERO_EULER = 2.7182818284;
+
+    public static class Expressao
     {
-        String mathExpr;
+        private String mathExpr;
+        private Activity am;
 
         public Expressao()
         {
             mathExpr = "";
         }
 
-        public Expressao(String expr)
+        public Expressao(String expr, Activity activity)
         {
             mathExpr = expr;
+            am = activity;
+        }
+
+        public String corrigir()
+        {
+            /* Corrigir a expressão matemática */
+            mathExpr = mathExpr.replace(am.getString(R.string.multiplicacao),"*");
+            mathExpr = mathExpr.replace(am.getString(R.string.divisao),"/");
+            mathExpr = mathExpr.replace(am.getString(R.string.pi), String.valueOf(Matematica.PI));
+            mathExpr = mathExpr.replace(am.getString(R.string.seno), "sin");
+
+            return mathExpr;
         }
 
         private int countCloseParenthesis()
@@ -44,18 +62,6 @@ public final class Matematica
             return count;
         }
 
-        private int countNumbers()
-        {
-            // Não implementado ainda
-            return 0;
-        }
-
-        private int countOperators()
-        {
-            // Não implementado ainda
-            return 0;
-        }
-
         public boolean isValid()
         {
             boolean condition = false;
@@ -72,6 +78,9 @@ public final class Matematica
 
         if(n == 0)
             return 1;
+
+        if(n < 0)
+            n *= -1;
 
         for(int k = 1; k <= n; k++)
             result *= k;
@@ -124,19 +133,19 @@ public final class Matematica
         return(Math.pow(n,(1/indice)));
     }
 
-    public static double logaritmo(double n) throws Exception
+    public static double logaritmo10(double n) throws Exception
     {
-        if(n == (double)0)
-            throw new Exception("O logaritmo de zero não é definido");
+        if(n <= (double)0)
+            throw new Exception("O logaritmo só é definido no domínio dos reais positivos");
 
-        return(Math.log(n));
+        return(Math.log(n) / Math.log(10.0));
     }
 
     public static double ln(double n) throws Exception
     {
         if((n - 1) <= 0)
-            throw new Exception("O ln de 0 e de números negativos não existem");
+            throw new Exception("O ln só é definido no domínio dos reais positivos");
 
-        return(Math.log1p(n - 1));
+        return(Math.log(n));
     }
 }

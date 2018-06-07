@@ -63,6 +63,16 @@ namespace CalcNetServer.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap gif_alert {
+            get {
+                object obj = ResourceManager.GetObject("gif_alert", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap if_button_cancel_1939 {
             get {
                 object obj = ResourceManager.GetObject("if_button_cancel_1939", resourceCulture);

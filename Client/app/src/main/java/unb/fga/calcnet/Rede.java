@@ -10,6 +10,7 @@ package unb.fga.calcnet;
 import android.Manifest;
 import android.Manifest.permission;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ContentResolver;
@@ -20,8 +21,10 @@ import android.net.RouteInfo;
 import android.net.wifi.WifiInfo;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.system.ErrnoException;
 import android.util.Log;
 import android.content.Context;
 import org.json.JSONArray;
@@ -34,6 +37,7 @@ import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.NetworkInterface;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.Collections;
 import java.util.List;
@@ -52,11 +56,23 @@ public class Rede extends AsyncTask<String, Void, Boolean>
     @Override
     protected Boolean doInBackground(String... args)
     {
-        RConnnect.run();
+        RClient.run();
+        RClientIsConnected.run();
+
         return true;
     }
 
-    public static Runnable RConnected = new Runnable() {
+    @Override
+    protected void onCancelled(Boolean result)
+    {
+        try {
+            finalize();
+        } catch (Throwable throwable) {
+            Log.e("[ERRO]", "Falha ao finalizar thread: " + throwable.getMessage());
+        }
+    }
+
+    public static Runnable RClientIsConnected = new Runnable() {
         @Override
         public void run()
         {
@@ -65,7 +81,7 @@ public class Rede extends AsyncTask<String, Void, Boolean>
                 synchronized (this)
                 {
                     try {
-                        this.wait(2000);
+                        this.wait(3000);
                     } catch(InterruptedException ie)
                     {
                         Log.e("[ERROR]", ie.getMessage());
@@ -78,69 +94,62 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         }
     };
 
-    public static Runnable RConnnect = new Runnable() {
+    public static Runnable RClient = new Runnable() {
         @Override
         public void run()
         {
-            String sJson = "";
-            JSONObject jsonObject = null;
+            boolean keep_alive = false;
+            Rede k = new Rede();
 
-            while(connectToServer(ActivityDadosUsuario.ip, ActivityDadosUsuario.porta) == null)
+            while(true)
             {
-                try {
-                    synchronized (this) {
-                        this.wait(4000);
-                    }
-                } catch(InterruptedException ie)
+                while (connectToServer(ActivityDadosUsuario.ip, ActivityDadosUsuario.porta) == null)
                 {
-                    Log.e("[ERROR]", "wait: " + ie.getMessage());
+                    try {
+                        synchronized (this) {
+                            this.wait(4000);
+                        }
+                    } catch (InterruptedException ie) {
+                        Log.e("[ERRO]", "Erro ao aguardar: " + ie.getMessage());
+                    }
                 }
-            }
 
-            Log.i("[INFO]", "Estamos conectados");
-            Log.i("[SERIAL] ", getSerial(ctx));
+                Log.i("[INFO]", "Estamos conectados com: " + netSocket.getRemoteSocketAddress().toString());
+                Log.i("[NUM-SERIAL] ", getSerial(ctx));
 
-            try {
-                netSocket.setKeepAlive(true);
-            } catch(SocketException SE)
-            {
-                SE.printStackTrace();
-            }
-
-            sJson = "{\"nome\":\"" + ActivityDadosUsuario.nome + "\",";
-            sJson += "\"serial\":\"" + getSerial(ctx) + "\",";
-            sJson += "\"ip\":\"" + ActivityDadosUsuario.ip + "\",";
-            sJson += "\"bluetooth\":" + ((bluetoothLigado()) ? 1:0) + ",";
-            sJson += "\"modo_aviao\":" + wifiLigado(ctx) + "}";
-
-            Log.d("[JSON]", sJson);
-
-            try {
-                new JSONObject(sJson);
-
-                Log.d("[DEBUG]", "Objeto JSON criado com sucesso");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                InputStream is = netSocket.getInputStream();
-                OutputStream os = netSocket.getOutputStream();
-
-                byte data[] = new String("lucas").getBytes();
-                os.write(data,0,data.length);
-                Log.d("[WRITE]", "Json enviado ao servidor");
-            } catch (IOException e)
-            {
-                e.printStackTrace();
                 try {
-                    netSocket.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                    keep_alive = netSocket.getKeepAlive();
+                } catch (Exception error) {
+                    Log.e("[ERRO]", "Falha ao pegar flag de keep-alive: " + error.getMessage());
                 }
+
+                try {
+                    netSocket.setKeepAlive(true);
+                } catch (SocketException SE) {
+                    Log.e("[ERRO]", "Não foi possível mudar flag de keep-alive: " + SE.getMessage());
+                }
+
+                Log.i("[INFO]", "Keep-alive: " + keep_alive);
+                while (netSocket.isConnected())
+                {
+                    int kmu = k.monitorarUsuario(netSocket);
+
+                    if(kmu != 0)
+                        Log.e("[ERRO]", "monitorarUsuario retornou " + kmu);
+                }
+
+                Log.i("[INFO]", "Você foi desconectado do servidor");
             }
 
-            sJson = "sss";
+            /*
+            try {
+                finalize();
+                Log.i("[INFO]", "Thread de conexão finalizada");
+            } catch(Throwable error)
+            {
+                Log.e("[ERRO]", "Falha ao finalizar thread: " + error.getMessage());
+            }
+            */
         }
     };
 
@@ -153,6 +162,7 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         ContentResolver resolver = cr;
         String config = Settings.Global.AIRPLANE_MODE_ON;
 
+        Log.i("[AIRPLANE-MODE]", "config is: " + config);
         int mIsOn = Settings.Global.getInt(resolver,config,0);
 
         return mIsOn;
@@ -208,28 +218,80 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         return serial;
     }
 
-    public static Socket connectToServer(String ip, int porta)
+    private static Socket connectToServer(String ip, int porta)
     {
         try
         {
-            Log.i("[INFO]", "Criando socket");
             netSocket = new Socket(ip, porta);
-            Log.i("[INFO]", "Socket criado");
-
             isConnected = netSocket.isConnected();
-
-            Log.i("[INFO]", "Isconnected: " + isConnected);
-
             if(netSocket.isConnected())
                 return netSocket;
 
-            //SocketAddress addr = netSocket.getRemoteSocketAddress();
+            SocketAddress addr = netSocket.getRemoteSocketAddress();
+            Log.i("[INFO]", "Conectado a: " + addr.toString());
             //netSocket.connect(addr, 60);
         } catch (Exception IE) {
-            Log.e("[ERROR-IE]", "Cannot connect to host: " + IE.getMessage());
-            IE.printStackTrace();
+            Log.e("[ERRO]", "Falha ao conectar: " + IE.getMessage());
         }
 
         return null;
+    }
+
+    private int monitorarUsuario(Socket socket)
+    {
+        String sJson = "";
+        JSONObject jsonObject = null;
+        InputStream is;
+        OutputStream os;
+
+        sJson = "{\"nome\":\"" + ActivityDadosUsuario.nome + "\",";
+        sJson += "\"serial\":\"" + getSerial(ctx) + "\",";
+        sJson += "\"ip\":\"" + ActivityDadosUsuario.ip + "\",";
+        sJson += "\"bluetooth\":" + ((bluetoothLigado()) ? 1 : 0) + ",";
+        sJson += "\"modo_aviao\":" + modoAviaoLigado(ctx.getContentResolver()) + "}";
+
+        try {
+            jsonObject = new JSONObject(sJson);
+
+            Log.d("[DEBUG]", "Objeto JSON criado com sucesso: " + jsonObject.toString());
+        } catch (JSONException e) {
+            Log.e("[ERRO]", e.getMessage());
+            return 2;
+        }
+
+        try {
+            //is = netSocket.getInputStream();
+            os = socket.getOutputStream();
+
+            String json = jsonObject.toString();
+            byte data[] = json.getBytes();
+            os.write(data, 0, data.length);
+
+        } catch (IOException e) {
+            Log.e("[ERRO]", e.toString() + ": " + e.getMessage());
+            try {
+                socket.close();
+            } catch (IOException e1) {
+                Log.e("[ERRO]", e1.getMessage());
+                return 3;
+            }
+            return 4;
+        } catch(NullPointerException npe)
+        {
+            Log.e("[ERRO]", npe.getMessage());
+            return 5;
+        }
+
+        synchronized (this)
+        {
+            try {
+                wait(5000);
+            } catch (InterruptedException ie) {
+                Log.e("[ERRO]", "Erro ao aguardar com wait: " + ie.getMessage());
+                return 6;
+            }
+        }
+
+        return 0;
     }
 }
