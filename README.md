@@ -1,3 +1,5 @@
+[![Licence](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+
 # CalcNet
 
 ### Do que se trata?
@@ -21,7 +23,7 @@
 * **Android Studio**: https://developer.android.com/studio/?hl=pt-br
 * **Git**: https://git-scm.com/downloads
 * **Microsoft Visio**: https://products.office.com/pt-br/visio/flowchart-software?tab=tabs-1
-* 
+
 ### Como compilar
 * **Cliente**: 
  * Baixe o Android Studio e abra o projeto.
@@ -59,8 +61,9 @@
 
 ##### Implementação e documentação:
 * Lucas Vieira de Jesus -> <lucas.engen.cc@gmail.com>.
-* Christopher Lucas Israel dos Santos -> <dantecreedtutoriais@gmail.com>
+
 ##### Pesquisa de campo e documentação:
+* Christopher Lucas Israel dos Santos -> <dantecreedtutoriais@gmail.com>
 * Andressa de Fátima Araújo Miranda -> <andressaaraujo0505@gmail.com>
 * Marcelo José Gomes Leitão -> <marcelomjgl@hotmail.com>
 * Renan Cristyan Araújo Pinheiro -> <rcristyan9@gmail.com>
