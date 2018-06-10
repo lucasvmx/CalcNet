@@ -9,7 +9,7 @@
         android:id="@+id/textView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Seu nome:"
+        android:text="Seu nome e sobrenome:"
         android:textAppearance="@android:style/TextAppearance.Material.Large"
         android:textColor="@android:color/holo_blue_bright" />
 
@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Ex: Gabriel"
+        android:hint="Ex: Gabriel Santos"
         android:inputType="textPersonName" />
 
     <TextView

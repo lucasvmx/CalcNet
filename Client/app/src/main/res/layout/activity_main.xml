@@ -1,48 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/mainGrid"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:keepScreenOn="true"
+    android:orientation="vertical"
     app:layout_gravity="fill">
 
     <EditText
         android:id="@+id/editText_Math"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:cursorVisible="false"
+        android:elegantTextHeight="true"
         android:ems="20"
         android:enabled="true"
+        android:fadeScrollbars="false"
+        android:filterTouchesWhenObscured="false"
+        android:fontFamily="monospace"
         android:inputType="text"
         android:labelFor="@id/editText_Math"
+        android:linksClickable="false"
+        android:longClickable="false"
         android:singleLine="true"
         android:text="hello world"
-        android:textColor="@android:color/holo_blue_bright"
-        app:layout_column="0"
-        app:layout_row="0" />
+        android:textColor="@android:color/holo_blue_bright" />
 
     <EditText
         android:id="@+id/editTextResult"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:cursorVisible="false"
         android:ems="20"
         android:enabled="true"
+        android:fontFamily="monospace"
         android:inputType="text"
         android:soundEffectsEnabled="true"
         android:text="hello world"
-        android:textColor="@android:color/holo_blue_bright"
-        app:layout_column="0"
-        app:layout_row="1" />
+        android:textColor="@android:color/holo_blue_bright" />
 
     <android.support.v7.widget.GridLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/mainGrid"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:clipChildren="true"
         android:clipToPadding="true"
         android:fadeScrollbars="false"
         android:filterTouchesWhenObscured="true"
         android:fitsSystemWindows="true"
         android:keepScreenOn="false"
+        android:layoutDirection="locale"
         android:scrollbarStyle="insideInset"
         android:soundEffectsEnabled="true"
         android:textAlignment="center"
@@ -138,6 +149,7 @@
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
+            android:layoutDirection="inherit"
             android:onClick="OnClick"
             android:text="@string/arcoseno"
             android:textAllCaps="false"
@@ -376,6 +388,7 @@
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
+            android:layoutDirection="inherit"
             android:onClick="OnClick"
             android:text="@string/potencia_e"
             android:textAllCaps="false"
@@ -461,9 +474,34 @@
             android:textAllCaps="false"
             app:layout_column="3"
             app:layout_row="3" />
+
+        <TextView
+            app:layout_column="0"
+            app:layout_row="4" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_column="0"
+            app:layout_row="12" />
+
     </android.support.v7.widget.GridLayout>
+
+    <TextView
+        android:id="@+id/textView_status"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="@android:color/holo_green_light"
+        android:clickable="false"
+        android:fontFamily="monospace"
+        android:linksClickable="false"
+        android:longClickable="false"
+        android:textAlignment="center"
+        android:textAllCaps="true" />
+
     <!--
 
 
     -->
-</android.support.v7.widget.GridLayout>
+</LinearLayout>

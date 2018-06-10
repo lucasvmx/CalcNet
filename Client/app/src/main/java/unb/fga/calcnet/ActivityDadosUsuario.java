@@ -1,6 +1,7 @@
 package unb.fga.calcnet;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import java.net.InetAddress;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -77,10 +79,7 @@ public class ActivityDadosUsuario extends Activity
             porta = Integer.parseInt(txPorta.getText().toString());
         } catch(Exception e)
         {
-            AlertDialog.Builder error = new AlertDialog.Builder(this);
-            error.setTitle("Erro Crítico");
-            error.setMessage("Os dados foram inseridos? Se sim, estão corretos? Tente novamente");
-            error.show();
+            common.showMessage("Verifique se os dados foram inseridos corretamente", Toast.LENGTH_LONG);
             return;
         }
 
@@ -139,7 +138,7 @@ public class ActivityDadosUsuario extends Activity
                         common.showMessage("Erro", "O wifi está desligado");
                     } else
                     {
-                        common.showMessage("Erro", "Não foi possível conectar-se ao servidor. Tente novamente");
+                        common.showMessage("Não foi possível conectar-se ao servidor. Tente novamente",Toast.LENGTH_LONG);
                     }
                 }
 
@@ -149,7 +148,7 @@ public class ActivityDadosUsuario extends Activity
 
             Intent intent = new Intent(this,MainActivity.class);
             MainActivity.mainSocket = Rede.netSocket;
-            startActivity(intent);
+            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
             finish();
         }
     }

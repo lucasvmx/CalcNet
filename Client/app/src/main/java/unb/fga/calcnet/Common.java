@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public class Common
 {
@@ -82,5 +83,10 @@ public class Common
         dialog.setPositiveButton("OK",null);
 
         return dialog.show();
+    }
+
+    public void showMessage(String text, int duration)
+    {
+        Toast.makeText(c,text,duration).show();
     }
 }

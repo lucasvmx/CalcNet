@@ -14,8 +14,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Net.NetworkInformation;
 
 namespace CalcNetServer
 {
@@ -58,9 +57,9 @@ namespace CalcNetServer
         Color defaultForeColor, defaultBackColor;
         public static volatile bool bServerIsRunning;
         public static volatile bool bStopServer;
+        public static volatile string nomeRedeWifi = "";
         protected Image okImg;
         protected Image errImg;
-        internal static PictureBox warningGif = null;
 
         /* Aqui o código realmente começa */
 
@@ -69,12 +68,9 @@ namespace CalcNetServer
             log = new Logger();
             InitializeComponent();
 
-            gifAlerta.Hide();
-
             fMain = this; /* Necessário para que outro arquivo-fonte acesse a função outputLog definida aqui */
-            warningGif = gifAlerta;
 
-            Text = $"{AutoRevision.VersionInfo.VcsBasename} {AutoRevision.VersionInfo.VcsTag} build {AutoRevision.VersionInfo.VcsNum}";
+            Text = $"{AutoRevision.VersionInfo.VcsBasename} {AutoRevision.VersionInfo.VcsTag} compilãção {AutoRevision.VersionInfo.VcsNum}";
             label_tab1_message1.Text = "";
             label_tab1_message2.Text = "";
             
@@ -117,6 +113,7 @@ namespace CalcNetServer
             serverWorker.DoWork += ServerWorker_DoWork;
 
             serverStatusWorker.RunWorkerAsync();
+            notifyIcon.ShowBalloonTip(3000, "CalcNet - Servidor", "Seja bem vindo ao CalcNet", ToolTipIcon.Info);
         }
        
         private void ServerStatusWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -131,8 +128,6 @@ namespace CalcNetServer
                         {
                             Invoke(new Action(() =>
                             {
-                                statusStrip1.BackColor = Color.Green;
-                                toolStripStatusLabel1.BackColor = Color.Green;
                                 toolStripStatusLabel1.Text = "Status: online";
                             }));
                         } catch(Exception)
@@ -148,8 +143,6 @@ namespace CalcNetServer
                         {
                             Invoke(new Action(() =>
                             {
-                                statusStrip1.BackColor = Color.Red;
-                                toolStripStatusLabel1.BackColor = Color.Red;
                                 toolStripStatusLabel1.Text = "Status: offline";
                             }));
                         } catch(Exception)
@@ -158,7 +151,7 @@ namespace CalcNetServer
                         }
                     }
                 }
-                Thread.Sleep(1000);
+                Thread.Sleep(5000);
             }
         }
 
@@ -217,7 +210,7 @@ namespace CalcNetServer
 
                     label_tab2_usuario.Text = Environment.UserName;
                     label_tab2_os.Text = os.VersionString + " " + ((Environment.Is64BitOperatingSystem) ? "x64":"x86");
-                    
+                    label_users_online.Text = $"{Connections.users}";
                     break;
             }
         }
@@ -241,15 +234,14 @@ namespace CalcNetServer
 
         private void botaoIniciarServidor_Click(object sender, EventArgs e)
         {
-            /* Verificar se o usuário escolher um IP e porta adequadamente */
             if(!temos_ip || !temos_porta)
             {
-                MessageBox.Show("Erro ao iniciar servidor:\n\nVocê precisa escolher uma porta e um endereço de IP válidos.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this, "Erro ao iniciar servidor:\n\nVocê precisa escolher uma porta e um endereço de IP válidos.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            if (tabControl1.SelectedIndex != 3)
-                tabControl1.SelectedIndex = 3;
+            if (tabControl1.SelectedIndex != 2)
+                tabControl1.SelectedIndex = 2;
 
             /* Iniciamos o servidor */
             try
@@ -272,22 +264,21 @@ namespace CalcNetServer
                     if (type == ERROR)
                     {
                         richTextBox_output.ForeColor = Color.Red;
-                        richTextBox_output.Text += "[!] ";
+                        richTextBox_output.AppendText("[!] ");
                     } else if(type == WARNING)
                     {
                         richTextBox_output.ForeColor = Color.DarkGoldenrod;
-                        richTextBox_output.Text += "[!] ";
+                        richTextBox_output.AppendText("[!] ");
                     } else if(type == INFO)
                     {
                         richTextBox_output.ForeColor = Color.DarkBlue;
-                        richTextBox_output.Text += "[i] ";
+                        richTextBox_output.AppendText("[i] ");
                     } else if(type == OK)
                     {
                         richTextBox_output.ForeColor = Color.DarkGreen;
-                        richTextBox_output.Text += "[+] ";
+                        richTextBox_output.AppendText("[+] ");
                     }
 
-                    richTextBox_output.ForeColor = defaultForeColor;
                     richTextBox_output.AppendText(texto);
                 }));
             }
@@ -296,22 +287,26 @@ namespace CalcNetServer
                 if (type == ERROR)
                 {
                     richTextBox_output.ForeColor = Color.Red;
-                    richTextBox_output.Text += "[!] ";
+                    richTextBox_output.AppendText("[!] ");
                 }
                 else if (type == WARNING)
                 {
                     richTextBox_output.ForeColor = Color.DarkGoldenrod;
-                    richTextBox_output.Text += "[!] ";
+                    richTextBox_output.AppendText("[!] ");
                 }
                 else if (type == INFO)
                 {
                     richTextBox_output.ForeColor = Color.DarkBlue;
-                    richTextBox_output.Text += "[i] ";
+                    richTextBox_output.AppendText("[i] ");
                 }
                 else if (type == OK)
                 {
                     richTextBox_output.ForeColor = Color.DarkGreen;
-                    richTextBox_output.Text += "[+] ";
+                    richTextBox_output.AppendText("[+] ");
+                }
+                else
+                {
+                    richTextBox_output.ForeColor = Color.Pink;
                 }
 
                 richTextBox_output.AppendText(texto);
@@ -325,6 +320,8 @@ namespace CalcNetServer
                 toolStripStatusLabel1.Text = "Parando ...";
                 bStopServer = true;
                 serverWorker.CancelAsync();
+                richTextBox_output.Clear();
+                Connections.users = 0;
             } else
             {
 
@@ -357,95 +354,31 @@ namespace CalcNetServer
             }
         }
 
-        public void ClearTree()
+        public void showBalooonTip(string titulo, string texto, ToolTipIcon icone, int timeout)
         {
-            if(treeView1.InvokeRequired)
+            notifyIcon.ShowBalloonTip(timeout, titulo, texto, ToolTipIcon.Info);
+        }
+
+        private static frmAbout frm = null;
+
+        private void manualDoUsuárioToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(this, "Ainda não implementado", "Informação", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void sobreOCalcNetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (frm != null && frm.Visible)
             {
-                treeView1.Invoke(new Action(() =>
-                {
-                    treeView1.Nodes.Clear();
-                }));
+                MessageBox.Show(this, "A janela já está aberta", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        public void addUserToTree(User user, int id)
-        {           
-            if (treeView1.InvokeRequired)
+            else
             {
-                treeView1.Invoke(new Action(() =>
+                if (frm == null)
                 {
-                    try
-                    {
-                        TreeNode[] parents = treeView1.Nodes.Find($"user-{id - 1}", false);
-                        TreeNode parent;
-
-                        if (parents.Length == 1)
-                        {
-                            parent = parents[0];
-                            parent.Nodes[$"user-{id - 1}"].Text = user.nome;
-                            parent.Nodes[$"user-{id - 1}"].Text = user.nome;
-
-                            parent.Nodes.Add($"user-{id - 1}", user.nome);
-                            parent.Nodes[$"user-{id - 1}"].Nodes.Add(user.ip);
-                            parent.Nodes[$"user-{id - 1}"].Nodes.Add((user.modo_aviao == 0) ? "Modo aviao: off" : "Modo aviao: on");
-                            parent.Nodes[$"user-{id - 1}"].Nodes.Add(user.serial);
-                        }
-                        else
-                        {
-                            treeView1.Nodes.Add($"user-{id - 1}", user.nome);
-                            treeView1.Nodes[$"user-{id - 1}"].Nodes.Add(user.ip);
-                            treeView1.Nodes[$"user-{id - 1}"].Nodes.Add((user.modo_aviao == 0) ? "Modo aviao: off" : "Modo aviao: on");
-                            treeView1.Nodes[$"user-{id - 1}"].Nodes.Add(user.serial);
-                        }
-                    } catch(Exception)
-                    {
-
-                    }
-
-                }));
-            } else
-            {
-                try
-                {
-                    treeView1.Nodes.Add($"user-{id - 1}", user.nome);
-                    treeView1.Nodes[$"user-{id - 1}"].Nodes.Add(user.ip);
-                    treeView1.Nodes[$"user-{id - 1}"].Nodes.Add((user.modo_aviao == 0) ? "Modo aviao: off" : "Modo aviao: on");
-                    treeView1.Nodes[$"user-{id - 1}"].Nodes.Add(user.serial);
-                }
-                catch (Exception)
-                {
-
-                }
-            }         
-        }
-
-        public void showWarningGif(bool bShow)
-        {
-            if(gifAlerta.InvokeRequired)
-            {
-                Invoke(new Action(() =>
-                {
-                    if (bShow)
-                    {
-                        if (!gifAlerta.Visible)
-                            gifAlerta.Show();
-                    }
-                    else
-                    {
-                        if (gifAlerta.Visible)
-                            gifAlerta.Hide();
-                    }
-                }));
-            } else {
-                if (bShow)
-                {
-                    if (!gifAlerta.Visible)
-                        gifAlerta.Show();
-                }
-                else
-                {
-                    if(gifAlerta.Visible)
-                        gifAlerta.Hide();
+                    frm = new frmAbout();
+                    frm.Show(this);
+                    frm = null;
                 }
             }
         }

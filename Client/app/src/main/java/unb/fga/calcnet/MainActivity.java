@@ -13,7 +13,15 @@ import android.app.Application;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorAdditionalInfo;
+import android.hardware.SensorDirectChannel;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -21,32 +29,52 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import java.net.Socket;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.List;
+
 import com.fathzer.soft.javaluator.DoubleEvaluator;
 import android.support.v7.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class MainActivity extends Activity
+public class MainActivity extends Activity implements SensorEventListener
 {
     public static Socket mainSocket = null;
     private EditText mathText;
     private EditText resultText;
-    private GridLayout mainGrid;
+    private LinearLayout linearLayout;
+    private GridLayout gridLayout;
+    private TextView tv;
     private boolean radianos;
     private Button botaoSwitch;
     private DoubleEvaluator dv;
     private Common common;
     public static volatile boolean MainActivityStopped = false;
+    private Handler handler;
+    private SensorManager sensor_manager;
+    private Sensor sensorProximidade;
+    private boolean flag;
+    private TextView tvStatus;
+
+    // FIXME: Corrigir funções trigonométricas inversas
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_main);
         dv = new DoubleEvaluator();
-        common = new Common(this);
+        common = new Common(this,this);
 
         mathText = findViewById(R.id.editText_Math);
         resultText = findViewById(R.id.editTextResult);
+        tvStatus = findViewById(R.id.textView_status);
 
         /* Apagar os textos que já aparecem */
         mathText.setText("");
@@ -60,8 +88,102 @@ public class MainActivity extends Activity
         else
             radianos = false;
 
-        // Adjust items
-        mainGrid = findViewById(R.id.mainGrid);
+        //  Ajustar os itens
+        linearLayout = findViewById(R.id.mainLayout);
+        gridLayout = findViewById(R.id.mainGrid);
+
+        tv = findViewById(R.id.textView_status);
+
+        handler = new Handler();
+
+        sensor_manager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        sensorProximidade = sensor_manager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+
+        if(Rede.isConnected) {
+            tv.setTextColor(Color.BLACK);
+            tv.setBackgroundColor(getResources().getColor(R.color.holo_green));
+            tvStatus.setText("ONLINE");
+        } else {
+            tvStatus.setBackgroundColor(Color.RED);
+            tvStatus.setText("OFFLINE");
+        }
+    }
+
+    Runnable batterySaver = new Runnable() {
+        @Override
+        public void run() {
+            flag = true;
+            handler.post(this);
+        }
+    };
+
+    @Override
+    protected void onResume()
+    {
+        sensor_manager.registerListener(this,sensorProximidade,SensorManager.SENSOR_DELAY_NORMAL);
+        handler.post(batterySaver);
+        super.onResume();
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor s, int v)
+    {
+
+    }
+
+    private void mudarBrilhoTela(float brilho)
+    {
+        try {
+            WindowManager.LayoutParams lp = getWindow().getAttributes();
+            lp.screenBrightness = brilho;
+
+            getWindow().setAttributes(lp);
+        } catch(Exception e)
+        {
+            Log.e("[ERROR]", "Falha ao mudar brilho da tela: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent se)
+    {
+        if(se.sensor.getType() == Sensor.TYPE_PROXIMITY)
+        {
+            if(flag)
+            {
+                if (se.values[0] == sensorProximidade.getMaximumRange()) {
+                    Log.i("[SENSOR]", "Longe da tela");
+                    mudarBrilhoTela(0f);
+                } else {
+                    Log.i("[SENSOR]", "Perto da tela");
+                    mudarBrilhoTela(100f);
+                }
+
+                flag = false;
+            }
+        }
+    }
+
+    @Override
+    public void onUserInteraction()
+    {
+        handler = new Handler();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run()
+            {
+                if(Rede.isConnected) {
+                    tv.setTextColor(Color.BLACK);
+                    tv.setBackgroundColor(getResources().getColor(R.color.holo_green));
+                    tv.setText("ONLINE");
+                } else {
+                    tv.setText("OFFLINE");
+                    tv.setBackgroundColor(Color.RED);
+                    tv.setTextColor(Color.WHITE);
+                }
+            }
+        });
     }
 
     @Override
@@ -94,6 +216,8 @@ public class MainActivity extends Activity
     public void onPause()
     {
         MainActivityStopped = true;
+        sensor_manager.unregisterListener(this);
+        handler.removeCallbacks(batterySaver);
         super.onPause();
     }
 
@@ -125,13 +249,6 @@ public class MainActivity extends Activity
 
                 text = mathText.getText().toString();
                 text = new Matematica.Expressao(text,this).corrigir();
-
-                if(radianos)
-                {
-                    // Converter o argumento de todos os angulos para radianos
-                } else {
-                    // Converter para graus
-                }
 
                 if(!text.isEmpty()) {
                     text = text.toLowerCase();
@@ -223,15 +340,86 @@ public class MainActivity extends Activity
                 break;
 
             case R.id.botao_seno:
-                mathText.append(getString(R.string.seno) + "(");
+                dv = new DoubleEvaluator();
+                text = mathText.getText().toString();
+
+                if(!text.isEmpty())
+                {
+                    /* Corrige a expressão matemática */
+                    text = new Matematica.Expressao(text,this).corrigir();
+
+                    /* Calcula o resultado da expressão digitada */
+                    try {
+                        x = dv.evaluate(text);
+                        if(!radianos) {
+                            /* Converter o x para radianos, pois a função só trabalha com radianos */
+                            x = Math.toRadians(x);
+                        }
+
+                        result = Matematica.seno(x);
+                        resultText.setText(String.valueOf(result));
+                    } catch(Throwable error)
+                    {
+                        resultText.setText("Erro");
+                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
+                    }
+                }
                 break;
 
             case R.id.botao_cosseno:
-                mathText.append(getString(R.string.cosseno) + "(");
+                dv = new DoubleEvaluator();
+                text = mathText.getText().toString();
+
+                if(!text.isEmpty())
+                {
+                    /* Corrige a expressão matemática */
+                    text = new Matematica.Expressao(text,this).corrigir();
+
+                    /* Calcula o resultado da expressão digitada */
+                    try {
+                        x = dv.evaluate(text);
+                        if(!radianos) {
+                            /* Converter o x para radianos, pois a função só trabalha com radianos */
+                            x = Math.toRadians(x);
+                        }
+
+                        result = Matematica.cosseno(x);
+
+                        resultText.setText(String.valueOf(result));
+                    } catch(Throwable error)
+                    {
+                        resultText.setText("Erro");
+                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
+                    }
+                }
                 break;
 
             case R.id.botao_tangente:
-                mathText.append(getString(R.string.tangente) + "(");
+                dv = new DoubleEvaluator();
+                text = mathText.getText().toString();
+
+                if(!text.isEmpty())
+                {
+                    /* Corrige a expressão matemática */
+                    text = new Matematica.Expressao(text,this).corrigir();
+
+                    /* Calcula o resultado da expressão digitada */
+                    try {
+                        x = dv.evaluate(text);
+                        if(!radianos) {
+                            /* Converter o x para radianos, pois a função só trabalha com radianos */
+                            x = Math.toRadians(x);
+                        }
+
+                        result = Matematica.tangente(x);
+
+                        resultText.setText(String.valueOf(result));
+                    } catch(Throwable error)
+                    {
+                        resultText.setText("Erro");
+                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
+                    }
+                }
                 break;
 
             case R.id.botao_exp_x:
@@ -251,10 +439,11 @@ public class MainActivity extends Activity
                         } else {
                             resultText.setText(String.valueOf(result));
                         }
-                    } catch(Exception error)
+                    } catch(Throwable error)
                     {
                         resultText.setText("Erro");
-                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
+                        if(error != null)
+                            Log.e("[ERRO]", error.getMessage());
                     }
                 } else {
                     common.showMessage("Erro", "Insira um número");
@@ -330,7 +519,7 @@ public class MainActivity extends Activity
                                 resultText.setText("" + result);
                             }
                         }
-                    } catch(Exception error)
+                    } catch(Throwable error)
                     {
                         Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
                         resultText.setText("Erro");
@@ -354,7 +543,7 @@ public class MainActivity extends Activity
                         result = Math.pow(10.0, x);
                         resultText.setText(String.valueOf(result));
                     }
-                } catch(Exception error)
+                } catch(Throwable error)
                 {
                     common.showMessage("Erro crítico", "Não foi possível realizar esta operação. Tente novamente");
                     Log.e("[ERROR]", error.getMessage());
@@ -374,9 +563,14 @@ public class MainActivity extends Activity
                     /* Calcula o resultado da expressão digitada */
                     try {
                         x = dv.evaluate(text);
+                        if(!radianos) {
+                            /* Converter o x para radianos, pois a função só trabalha com radianos */
+                            x = x * (Matematica.PI / 180.0);
+                        }
+
                         result = Matematica.arcoseno(x);
                         resultText.setText(String.valueOf(result));
-                    } catch(Exception error)
+                    } catch(Throwable error)
                     {
                         resultText.setText("Erro");
                         Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
@@ -393,7 +587,12 @@ public class MainActivity extends Activity
                 {
                     /* Calcula o resultado da expressão digitada */
                     x = dv.evaluate(text);
-                    result = Matematica.arcocoseno(x);
+                    if(!radianos) {
+                        /* Converter o x para radianos, pois a função só trabalha com radianos */
+                        x = x * (Matematica.PI / 180.0);
+                    }
+
+                    result = Matematica.arcotangente(x);
                     resultText.setText(String.valueOf(result));
                 }
                 break;
@@ -401,17 +600,17 @@ public class MainActivity extends Activity
             case R.id.botao_ln:
                 dv = new DoubleEvaluator();
                 text = mathText.getText().toString();
-                text = new Matematica.Expressao(text,this).corrigir();
 
                 if(!text.isEmpty())
                 {
-                    /* Calcula o resultado da expressão digitada */
+                    // Calcula o resultado da expressão digitada
+                    text = new Matematica.Expressao(text,this).corrigir();
                     x = dv.evaluate(text);
                     try {
                         result = Matematica.ln(x);
                         resultText.setText(String.valueOf(result));
-                    } catch(Exception e) {
-                        common.showMessage("Erro", e.getMessage());
+                    } catch(Throwable e) {
+                        common.showMessage(e.getMessage(),Toast.LENGTH_SHORT);
                     }
                 }
                 break;
@@ -429,13 +628,15 @@ public class MainActivity extends Activity
                     try {
                         result = Matematica.logaritmo10(x);
                         resultText.setText(String.valueOf(result));
-                    } catch(Exception e) {
+                    } catch(Throwable e) {
                         common.showMessage("Erro", e.getMessage());
                     }
                 }
                 break;
 
             case R.id.botao_fatorial:
+                long long_x = 0;
+
                 dv = new DoubleEvaluator();
                 text = mathText.getText().toString();
 
@@ -445,7 +646,14 @@ public class MainActivity extends Activity
 
                     try {
                         x = dv.evaluate(text);
-                        result = Matematica.fatorial(Math.round(x));
+                        if(x == Math.floor(x) && !Double.isInfinite(x))
+                        {
+                            long_x = (long)x;
+                            result = Matematica.fatorial(long_x);
+                        } else {
+                            result = Matematica.fatorial(x);
+                        }
+
                         if(Double.isNaN(result))
                         {
                             resultText.setText("Erro");
@@ -458,10 +666,9 @@ public class MainActivity extends Activity
                             else
                                 resultText.setText("" + result);
                         }
-                    } catch(Exception error)
+                    } catch(Throwable error)
                     {
                         resultText.setText("Erro");
-                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
                     }
                 }
                 break;
@@ -482,6 +689,32 @@ public class MainActivity extends Activity
                         x = dv.evaluate(text);
                         result = Math.abs(x);
                             resultText.setText("" + result);
+                    } catch(Throwable error)
+                    {
+                        resultText.setText("Erro");
+                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
+                    }
+                }
+                break;
+
+            case R.id.botao_xquadrado:
+                dv = new DoubleEvaluator();
+                text = mathText.getText().toString();
+
+                if(!text.isEmpty())
+                {
+                    text = new Matematica.Expressao(text,this).corrigir();
+
+                    try {
+                        x = dv.evaluate(text);
+                        result = Math.pow(x,2.0);
+                        if(!Double.isInfinite(result) && !Double.isNaN(result)) {
+                            resultText.setText("" + result);
+                        } else if(Double.isInfinite(result)) {
+                            resultText.setText(R.string.infinito);
+                        } else {
+                            resultText.setText("Erro: o resultado não é um número (NaN)");
+                        }
                     } catch(Exception error)
                     {
                         resultText.setText("Erro");
@@ -490,8 +723,63 @@ public class MainActivity extends Activity
                 }
                 break;
 
+            case R.id.botao_raiz_cubica:
+                dv = new DoubleEvaluator();
+                text = mathText.getText().toString();
+
+                if(!text.isEmpty())
+                {
+                    text = new Matematica.Expressao(text,this).corrigir();
+
+                    try {
+                        x = dv.evaluate(text);
+                        result = Math.cbrt(x);
+                        if(!Double.isInfinite(result) && !Double.isNaN(result)) {
+                            resultText.setText("" + result);
+                        } else if(Double.isInfinite(result)) {
+                            resultText.setText(R.string.infinito);
+                        } else {
+                            resultText.setText("Erro: o resultado não é um número (NaN)");
+                        }
+                    } catch(Exception error)
+                    {
+                        resultText.setText("Erro");
+                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
+                    }
+                }
+                break;
+
+            case R.id.botao_arcotangente:
+                dv = new DoubleEvaluator();
+                text = mathText.getText().toString();
+
+                if(!text.isEmpty())
+                {
+                    /* Corrige a expressão matemática */
+                    text = new Matematica.Expressao(text,this).corrigir();
+
+                    /* Calcula o resultado da expressão digitada */
+                    try {
+                        x = dv.evaluate(text);
+                        if(!radianos) {
+                            /* Converter o x para radianos, pois a função só trabalha com radianos */
+                            x = Math.toRadians(x);
+                        }
+
+                        result = Matematica.arcotangente(x);
+
+                        resultText.setText(String.valueOf(result));
+                    } catch(Throwable error)
+                    {
+                        resultText.setText("Erro");
+                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
+                    }
+                }
+                break;
+
             default:
-                common.showMessage("Desculpe", "Esta ação ainda não foi implementada");
+                common.showMessage("Ação ainda não implementada",Toast.LENGTH_SHORT);
+                //common.showMessage("Desculpe", "Esta ação ainda não foi implementada");
         }
     }
 }

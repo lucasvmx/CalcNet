@@ -41,21 +41,19 @@
 
 ### Detalhes de funcionamento:
 * Primeiramente, os usuários devem se conectar a um roteador propriamente configurado para o CalcNet.
-* Quando os alunos abrirem a calculadora, os seguintes dados serão solicitados: endereço ipv4 e porta de conexão. Essas informações deverão ser fornecidas pelo aplicador de prova.
-* Ao se conectar com o roteador, haverá uma comunicação entre o computador do aplicador de prova e a calculadora do aluno. Nessa conexão inicial, serão enviados ao servidor o endereço MAC do dispositivo móvel utilizado pelo aluno, para identificar cada dispositivo na rede.
+* Quando os alunos abrirem a calculadora, os seguintes dados serão solicitados: nome de usuário, endereço IPV4 e porta de conexão. O IP e a porta serão fornecidas pelo aplicador de prova.
+* Ao se conectar com o roteador, haverá uma comunicação entre o computador do aplicador de prova e a calculadora do aluno. Nessa conexão inicial, serão enviados ao servidor o número de série do dispositivo móvel utilizado pelo aluno, para identificar cada dispositivo na rede.
 * O CalcNet fará no celular do aluno uma coleta periódica sobre os seguintes dados:
-  * Nome do aplicativo em primeiro plano.
-  * Status da sua conexão de dados móveis.
+  * Número de série.
   * Status do seu bluetooth (on/off).
   * Status do modo avião (on/off).
 * Esses dados serão coletados e enviados ao servidor periodicamente, com o intuito de constatar alguma fraude, durante a prova.
 * Caso seja detectada alguma fraude pelo CalcNet, as medidas cabíveis devem ser tomadas pelo aplicador de prova.
 
-
 ### Características gerais
 * Dispensa cadastro de usuário, e banco de dados.
-* Intuitivo
-* Baixo custo de implementação
+* Intuitivo.
+* Baixo custo de implantação e manutenção.
 
 ### Desenvolvedores:
 

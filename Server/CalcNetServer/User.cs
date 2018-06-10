@@ -21,7 +21,8 @@ namespace CalcNetServer
         public string ip;
         public int bluetooth;  /* 0 = desligado, 1 = ligado */
         public int modo_aviao; /* 0 = desligado, 1 = ligado */
-        public bool saiu;
+        public int saiu;
+        public string rede_wifi;
 
         public User()
         {
@@ -30,6 +31,8 @@ namespace CalcNetServer
             ip = "";
             bluetooth = -1;
             modo_aviao = -1;
+            saiu = -1;
+            rede_wifi = "";
         }
     }
 }

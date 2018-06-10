@@ -6,18 +6,18 @@ public class autorevision {
     public static final String VCS_TYPE = "git";
     public static final String VCS_BASENAME = "CalcNet";
     public static final String VCS_UUID = "88b4eb81aed3ae20d73fb66d462366cb0fcc6408";
-    public static final long VCS_NUM = 18;
-    public static final String VCS_DATE = "2018-06-07T05:07:57Z";
+    public static final long VCS_NUM = 21;
+    public static final String VCS_DATE = "2018-06-07T15:56:46Z";
     public static final String VCS_BRANCH = "testes";
     public static final String VCS_TAG = "v0.1-rc1";
     public static final String VCS_TAG_OPENPGP = "";
-    public static final long VCS_TICK = 5;
+    public static final long VCS_TICK = 8;
     public static final String VCS_EXTRA = "";
 
-    public static final String VCS_ACTION_STAMP = "2018-06-07T05:07:57Z!lucas.engen.cc@gmail.com";
-    public static final String VCS_FULL_HASH = "45efcc47667c3eaf37476e43a94c1998e1e1d332";
+    public static final String VCS_ACTION_STAMP = "2018-06-07T15:56:46Z!lucas.engen.cc@gmail.com";
+    public static final String VCS_FULL_HASH = "d11eedfde62730a091b4144407bf98d5d31f5945";
     public static final String VCS_COMMIT_OPENPGP = "C34A16499AD7D7CC958D078727FC1C8A761EB8BD";
-    public static final String VCS_SHORT_HASH = "45efcc4";
+    public static final String VCS_SHORT_HASH = "d11eedf";
 
     public static final boolean VCS_WC_MODIFIED = true;
 }

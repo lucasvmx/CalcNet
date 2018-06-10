@@ -28,9 +28,12 @@ namespace CalcNetServer
             if (!Directory.Exists(logs_dirname))
                 Directory.CreateDirectory(logs_dirname);
 
-            logname = $"{logs_dirname}\\calcnet_log_{DateTime.Now.Day}-{DateTime.Now.Month}-{DateTime.Now.Year}-{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}.{extensao}";
+            logname = $"{logs_dirname}\\calcnetLog-{DateTime.Now.Day.ToString("00")}-{DateTime.Now.Month.ToString("00")}-{DateTime.Now.Year}.{extensao}";
             if(!File.Exists(logname))
-                File.WriteAllText(logname, $"Arquivo de Log - {VersionInfo.VcsBasename} {VersionInfo.VcsTag} build {VersionInfo.VcsNum}\nCodificação: {systemEncoding.EncodingName}\n\n");
+            {
+                File.WriteAllText(logname, $"Arquivo de Log - {VersionInfo.VcsBasename} {VersionInfo.VcsTag} build {VersionInfo.VcsNum}\nCodificação: {systemEncoding.EncodingName}\n");
+                File.AppendAllText(logname, $"Hora de início: {DateTime.Now.Hour.ToString("00")}:{DateTime.Now.Minute.ToString("00")}:{DateTime.Now.Second.ToString("00")}\n\n");
+            }
         }
 
         public void Write(string text)

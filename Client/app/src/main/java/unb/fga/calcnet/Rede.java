@@ -16,9 +16,11 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.RouteInfo;
 import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Looper;
@@ -27,6 +29,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.system.ErrnoException;
 import android.util.Log;
 import android.content.Context;
+import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -100,6 +104,10 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         {
             boolean keep_alive = false;
             Rede k = new Rede();
+            int tentativas = 0;
+            boolean stop = false;
+
+            isConnected = false;
 
             while(true)
             {
@@ -109,10 +117,21 @@ public class Rede extends AsyncTask<String, Void, Boolean>
                         synchronized (this) {
                             this.wait(4000);
                         }
+                        tentativas++;
+                        if(tentativas > 4)
+                        {
+                            Log.i("[INFO]", tentativas + " tentativas sem sucesso foram realizadas.");
+                            stop = true;
+                            break;
+                        }
+
                     } catch (InterruptedException ie) {
                         Log.e("[ERRO]", "Erro ao aguardar: " + ie.getMessage());
                     }
                 }
+
+                if(stop)
+                    break;
 
                 Log.i("[INFO]", "Estamos conectados com: " + netSocket.getRemoteSocketAddress().toString());
                 Log.i("[NUM-SERIAL] ", getSerial(ctx));
@@ -132,16 +151,18 @@ public class Rede extends AsyncTask<String, Void, Boolean>
                 Log.i("[INFO]", "Keep-alive: " + keep_alive);
                 while (netSocket.isConnected())
                 {
+                    isConnected = netSocket.isConnected();
                     int kmu = k.monitorarUsuario(netSocket);
 
                     if(kmu != 0)
                         Log.e("[ERRO]", "monitorarUsuario retornou " + kmu);
                 }
 
+                isConnected = false;
                 Log.i("[INFO]", "Você foi desconectado do servidor");
+                tentativas++;
             }
 
-            /*
             try {
                 finalize();
                 Log.i("[INFO]", "Thread de conexão finalizada");
@@ -149,7 +170,6 @@ public class Rede extends AsyncTask<String, Void, Boolean>
             {
                 Log.e("[ERRO]", "Falha ao finalizar thread: " + error.getMessage());
             }
-            */
         }
     };
 
@@ -241,13 +261,19 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         JSONObject jsonObject = null;
         InputStream is;
         OutputStream os;
+        String wifi_name;
+
+        WifiManager wifiManager = (WifiManager)ctx.getSystemService(ctx.WIFI_SERVICE);
+        WifiInfo info = wifiManager.getConnectionInfo ();
+        String name = info.getSSID();
 
         sJson = "{\"nome\":\"" + ActivityDadosUsuario.nome + "\",";
         sJson += "\"serial\":\"" + getSerial(ctx) + "\",";
         sJson += "\"ip\":\"" + ActivityDadosUsuario.ip + "\",";
         sJson += "\"bluetooth\":" + ((bluetoothLigado()) ? 1 : 0) + ",";
         sJson += "\"modo_aviao\":" + modoAviaoLigado(ctx.getContentResolver()) + ",";
-        sJson += "\"saiu:\":" + MainActivity.MainActivityStopped + "}";
+        sJson += "\"saiu\":" + (MainActivity.MainActivityStopped ? 1:0) + ",";
+        sJson += "\"rede_wifi\":" + ((name == null) ? "null":name ) + "}";
 
         try {
             jsonObject = new JSONObject(sJson);

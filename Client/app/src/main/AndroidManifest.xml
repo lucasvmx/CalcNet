@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="unb.fga.calcnet">
-
-    <uses-sdk android:minSdkVersion="23" />
+    xmlns:tools="http://schemas.android.com/tools"
+    package="unb.fga.calcnet"
+    tools:ignore="ExtraText">
+ />
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -15,10 +16,12 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher_round"
+        android:banner="@mipmap/icon"
+        android:logo="@android:color/transparent"
+        android:icon="@mipmap/icon"
         android:label="@string/app_name"
         android:resizeableActivity="false"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/icon"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Holo">
         <activity android:name=".TermosUsoActivity">

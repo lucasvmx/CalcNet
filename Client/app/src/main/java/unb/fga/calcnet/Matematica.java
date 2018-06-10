@@ -4,8 +4,8 @@ import android.app.Activity;
 
 public final class Matematica
 {
-    public static final double PI = 3.1415926536;
-    public static final double NUMERO_EULER = 2.7182818284;
+    public static final double PI = Math.PI;
+    public static final double NUMERO_EULER = Math.E;
 
     public static class Expressao
     {
@@ -88,17 +88,37 @@ public final class Matematica
         return result;
     }
 
-    public static double fatorial(double n)
+    public static double fatorial(double x)
     {
-        /* TODO: ver função gama */
+        /* método usando a série de stirling */
+        double raiz = Math.sqrt(2*Math.PI*x);
+        double potencia = Math.pow(x/Math.E,x);
+        double soma = 1 + (1/(12.0 * x)) + (1/(288 * Math.pow(x,2.0))) +
+                (1/(51840 * Math.pow(x,3.0))) - (571.0/(2488320 * Math.pow(x,4.0))) + (163879/(209018880.0 * Math.pow(x,5.0)));
 
-        return 0;
+        return raiz * potencia * soma;
     }
 
     public static double exponencial(double x)
     {
         return Math.exp(x);
     }
+
+    public static double seno(double angulo_radianos)
+    {
+        return(Math.sin(angulo_radianos));
+    }
+
+    public static double cosseno(double angulo_radianos)
+    {
+        return(Math.cos(angulo_radianos));
+    }
+
+    public static double tangente(double angulo_radianos)
+    {
+        return(Math.tan(angulo_radianos));
+    }
+
 
     public static double arcoseno(double angulo_radianos)
     {
