@@ -1,5 +1,5 @@
 :: Este arquivo faz parte do Calcnet
-:: Script para unir todos os binarios em uma pasta só
+:: Script para unir todos os binarios em uma unica pasta
 :: Autor: Lucas Vieira de Jesus
 
 @echo off
