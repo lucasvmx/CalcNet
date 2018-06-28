@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.Settings;
@@ -58,8 +59,8 @@ public class ActivityDadosUsuario extends Activity
         botaoConectarTitle = botaoConectar.getText().toString();
 
         txPorta.setText("1701");
-        txIp.setText("192.168.0.3");
-        txNome.setText("teste");
+        //txIp.setText("192.168.0.3");
+        //txNome.setText("teste");
 
         Rede.ctx = this.getApplicationContext();
         Rede.netThread = new Thread(Rede.RClient);
@@ -80,6 +81,16 @@ public class ActivityDadosUsuario extends Activity
         } catch(Exception e)
         {
             common.showMessage("Verifique se os dados foram inseridos corretamente", Toast.LENGTH_LONG);
+            return;
+        }
+
+        if(nome.isEmpty()) {
+            common.showMessage("Preciso saber seu nome", Toast.LENGTH_LONG);
+            return;
+        }
+
+        if(ip.isEmpty()) {
+            common.showMessage("E o endereço de IP?", Toast.LENGTH_LONG);
             return;
         }
 
@@ -154,7 +165,12 @@ public class ActivityDadosUsuario extends Activity
 
             Intent intent = new Intent(this,MainActivity.class);
             MainActivity.mainSocket = Rede.netSocket;
-            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            if(Build.VERSION.SDK_INT > 21) {
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+            }
+            else {
+                startActivity(intent);
+            }
             finish();
         }
     }

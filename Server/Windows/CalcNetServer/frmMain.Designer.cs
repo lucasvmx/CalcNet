@@ -67,7 +67,7 @@
             this.manualDoUsuárioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sobreOCalcNetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.metroProgressSpinner1 = new MetroFramework.Controls.MetroProgressSpinner();
-            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.iconeNotificacao = new System.Windows.Forms.NotifyIcon(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -334,9 +334,9 @@
             this.label_tab2_os.ForeColor = System.Drawing.Color.White;
             this.label_tab2_os.Location = new System.Drawing.Point(160, 41);
             this.label_tab2_os.Name = "label_tab2_os";
-            this.label_tab2_os.Size = new System.Drawing.Size(167, 17);
+            this.label_tab2_os.Size = new System.Drawing.Size(26, 17);
             this.label_tab2_os.TabIndex = 11;
-            this.label_tab2_os.Text = "Microsoft Windows 7 x64";
+            this.label_tab2_os.Text = "???";
             // 
             // label_tab2_porta
             // 
@@ -431,6 +431,7 @@
             this.richTextBox_output.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.richTextBox_output.Cursor = System.Windows.Forms.Cursors.Hand;
             this.richTextBox_output.Font = new System.Drawing.Font("Microsoft JhengHei UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richTextBox_output.ForeColor = System.Drawing.Color.Black;
             this.richTextBox_output.ImeMode = System.Windows.Forms.ImeMode.Close;
             this.richTextBox_output.Location = new System.Drawing.Point(0, 0);
             this.richTextBox_output.Name = "richTextBox_output";
@@ -485,7 +486,7 @@
             this.sairToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.sairToolStripMenuItem.Image = global::CalcNetServer.Properties.Resources.if_button_cancel_1939;
             this.sairToolStripMenuItem.Name = "sairToolStripMenuItem";
-            this.sairToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sairToolStripMenuItem.Size = new System.Drawing.Size(93, 22);
             this.sairToolStripMenuItem.Text = "Sair";
             this.sairToolStripMenuItem.Click += new System.EventHandler(this.sairToolStripMenuItem_Click);
             // 
@@ -528,12 +529,12 @@
             this.metroProgressSpinner1.TabIndex = 0;
             this.metroProgressSpinner1.UseSelectable = true;
             // 
-            // notifyIcon
+            // iconeNotificacao
             // 
-            this.notifyIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
-            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
-            this.notifyIcon.Text = "notifyIcon1";
-            this.notifyIcon.Visible = true;
+            this.iconeNotificacao.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.iconeNotificacao.Icon = ((System.Drawing.Icon)(resources.GetObject("iconeNotificacao.Icon")));
+            this.iconeNotificacao.Text = "CalcNet";
+            this.iconeNotificacao.Visible = true;
             // 
             // frmMain
             // 
@@ -614,7 +615,7 @@
         public System.Windows.Forms.RichTextBox richTextBox_output;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label_users_online;
-        public System.Windows.Forms.NotifyIcon notifyIcon;
+        public System.Windows.Forms.NotifyIcon iconeNotificacao;
     }
 }
 

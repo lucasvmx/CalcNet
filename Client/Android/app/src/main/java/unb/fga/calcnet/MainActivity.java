@@ -9,19 +9,15 @@ package unb.fga.calcnet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Application;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
-import android.hardware.SensorAdditionalInfo;
-import android.hardware.SensorDirectChannel;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -29,10 +25,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import java.net.Socket;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.List;
-
 import com.fathzer.soft.javaluator.DoubleEvaluator;
 import android.support.v7.widget.GridLayout;
 import android.widget.LinearLayout;
@@ -59,6 +51,7 @@ public class MainActivity extends Activity implements SensorEventListener
     private TextView tvStatus;
 
     // FIXME: Corrigir funções trigonométricas inversas
+    // FIXME: Thread continua rodando mesmo após a activity sair
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -124,6 +117,14 @@ public class MainActivity extends Activity implements SensorEventListener
     {
         sensor_manager.registerListener(this,sensorProximidade,SensorManager.SENSOR_DELAY_NORMAL);
         handler.post(batterySaver);
+        if(Rede.ban) {
+            Rede.stopThread = true;
+            if(Build.VERSION.SDK_INT > 21)
+                finishAndRemoveTask();
+            else
+                finish();
+        }
+
         super.onResume();
     }
 
@@ -171,7 +172,32 @@ public class MainActivity extends Activity implements SensorEventListener
     {
         handler = new Handler();
 
-        handler.post(new Runnable() {
+        if(Rede.ban)
+        {
+            Rede.stopThread = true;
+            tvStatus.setText("VOCÊ FOI BANIDO");
+            tvStatus.setBackgroundColor(Color.CYAN);
+            tvStatus.setTextColor(Color.BLACK);
+
+            /*
+            try {
+                synchronized (this) {
+                    wait(4000);
+                }
+            } catch(InterruptedException ie)
+            {
+
+            } finally {
+                if(Build.VERSION.SDK_INT > 21) {
+                    finishAndRemoveTask();
+                } else {
+                    finish();
+                }
+            }
+            */
+        }
+
+        handler.postDelayed(new Runnable() {
             @Override
             public void run()
             {
@@ -185,7 +211,7 @@ public class MainActivity extends Activity implements SensorEventListener
                     tv.setTextColor(Color.WHITE);
                 }
             }
-        });
+        },1000);
     }
 
     @Override
@@ -197,7 +223,11 @@ public class MainActivity extends Activity implements SensorEventListener
             public void onClick(DialogInterface dialog, int which) {
                 if(which == AlertDialog.BUTTON_POSITIVE)
                 {
-                    finishAndRemoveTask();
+                    MainActivityStopped  = true;
+                    if(Build.VERSION.SDK_INT > 21)
+                        finishAndRemoveTask();
+                    else
+                        finish();
                 }
             }
         });
@@ -644,7 +674,8 @@ public class MainActivity extends Activity implements SensorEventListener
                 {
                     text = new Matematica.Expressao(text,this).corrigir();
 
-                    try {
+                    try
+                    {
                         x = dv.evaluate(text);
                         if(x == Math.floor(x) && !Double.isInfinite(x))
                         {
@@ -775,6 +806,23 @@ public class MainActivity extends Activity implements SensorEventListener
                         Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
                     }
                 }
+                break;
+
+            case R.id.botaoSair:
+                int vezes = 5;
+                if(vezes == 0)
+                {
+                    if(Build.VERSION.SDK_INT > 21)
+                        finishAndRemoveTask();
+                    else
+                        finish();
+
+                    Rede.stopThread = true;
+                }
+
+                String msg = "Clique mais" + vezes + "vezes para sair do programa";
+                common.showMessage(msg,Toast.LENGTH_SHORT);
+                vezes--;
                 break;
 
             default:

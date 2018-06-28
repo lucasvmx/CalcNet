@@ -115,6 +115,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Compile Include="Properties\Autorevision.cs" />
+    <None Include="Rtf\manual_usuario.rtf" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -126,6 +127,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <EmbeddedResource Include="Rtf\about.rtf" />
+    <EmbeddedResource Include="Rtf\manual_usuario.pdf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -168,6 +170,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>cd $(ProjectDir)..\..\..\ &amp;&amp; autorevision.bat</PreBuildEvent>
+    <PreBuildEvent>cd $(ProjectDir)..\..\..\ &amp;&amp; autorevision.bat servidor</PreBuildEvent>
   </PropertyGroup>
 </Project>

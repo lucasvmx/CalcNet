@@ -14,8 +14,7 @@ using System.Windows.Forms;
 using System.IO;
 using Newtonsoft.Json;
 using System.Diagnostics;
-using System.Drawing;
-using System.Media;
+using System.Net.NetworkInformation;
 using System.Text;
 
 namespace CalcNetServer
@@ -27,7 +26,7 @@ namespace CalcNetServer
         string audios_dir = "";
         private frmMain fm = null;
         public static volatile int users = 0;
-        private string blacklist_file = "blacklist.db";
+        private string blacklist_file = "lista_negra.dat";
         StreamWriter sw;
 
         public Connections()
@@ -35,6 +34,11 @@ namespace CalcNetServer
             audios_dir = Environment.CurrentDirectory + "\\audios";
             fm = frmMain.fMain;
             users = 0;
+
+            /* Isso impede que os usuários fiquem permanentemente bloqueados */
+            if (File.Exists(blacklist_file))
+                File.Delete(blacklist_file);
+
             sw = File.CreateText(blacklist_file);
             sw.WriteLine($"# Usuários temporariamente bloqueados do CalcNet");
             sw.Close();
@@ -42,7 +46,7 @@ namespace CalcNetServer
 
         public void EscutarConexoes()
         {
-            TcpClient usuario;
+            TcpClient usuario = null;
             TcpListener tcpListener = new TcpListener(IPAddress.Parse(frmMain.ip), frmMain.porta);
 
             try
@@ -55,7 +59,7 @@ namespace CalcNetServer
                 throw;
             }
 
-            fm.writeLog($"Aguardando conexões no IP {frmMain.ip} => Porta {frmMain.porta}\n", frmMain.INFO);
+            fm.WriteLog($"Aguardando usuários se conectarem ...\n");
             Debug.WriteLine($"Aguardando conexões no IP {frmMain.ip} => Porta {frmMain.porta}");
             
             while (true)
@@ -66,10 +70,10 @@ namespace CalcNetServer
                     {
                         tcpListener.Server.Close();
                         tcpListener.Stop();
-                        fm.writeLog("A escuta de conexões foi terminada\n", frmMain.INFO);
+                        fm.WriteLog("A escuta de conexões foi terminada\n");
                     } catch(Exception e)
                     {
-                        fm.writeLog($"{e.Message}",frmMain.ERROR);
+                        fm.WriteLog($"{e.Message}");
                     }
                     
                     break;
@@ -110,6 +114,14 @@ namespace CalcNetServer
                     {
                         throw;
                     }
+                    catch(ThreadAbortException tae)
+                    {
+                        if(usuario != null)
+                            fm.WriteLog($"A thread de conexao do usuário {usuario.Client.RemoteEndPoint.ToString()} foi abortada <==\n");
+
+                        Logger stack = new Logger(true);
+                        stack.WriteStackTrace(tae);
+                    }
                 }
                 Thread.Sleep(1000);
             }
@@ -120,10 +132,9 @@ namespace CalcNetServer
 
         private void GerenciarConexao(object usuario, int id)
         {
-            /* usuario é uma classe do tipo TcpClient e por isso precisa ser convertida */
             TcpClient user = usuario as TcpClient;
             NetworkStream userStream;
-            byte[] memoria = new byte[512];
+            byte[] memoria = new byte[8192];
             int bytes_lidos = 0;
             string json_request = "";
             User user_data = null;
@@ -137,7 +148,7 @@ namespace CalcNetServer
             Thread.Sleep(500);
 
             clean_ip = getIpFromRemoteEndPointString(user.Client.RemoteEndPoint.ToString());
-            fm.writeLog($"Usuário conectado: {user.Client.RemoteEndPoint.ToString()}, id {users}\n", frmMain.INFO);
+            fm.WriteLog($"Usuário conectado: {user.Client.RemoteEndPoint.ToString()}, id {users}\n");
             frmMain.log.Write($"Usuário conectado: {user.Client.RemoteEndPoint.ToString()}\n");
 
             if(File.Exists(blacklist_file))
@@ -155,98 +166,117 @@ namespace CalcNetServer
                         blacklisted = true;
                         break;
                     }
-
                 }
             }
 
             if(blacklisted)
             {
-                //Debug.WriteLine($"O usuário {blacklisted_user_data[1]}, id {blacklisted_user_data[2]} está bloqueado temporariamente.\n",frmMain.WARNING);
                 user.Client.Close();
+                user.Client.Dispose();
                 users--;
                 return;
             }
 
             userStream = user.GetStream();
-            
+            userStream.ReadTimeout = 100;   /* 100 milissegundos */
+            userStream.WriteTimeout = 100;  /* 100 milissegundos */
+
+            if(!userStream.CanRead)
+            {
+                MessageBox.Show("Não é possível ler dados por este canal de rede", "Erro crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Thread.CurrentThread.Abort();
+            }
+
             while (user.Connected && !blacklisted)
             {
                 if (frmMain.bStopServer || usuario_errou)
                 {
                     Debug.WriteLine($"Desconectando usuário {user.Client.RemoteEndPoint.ToString()}");
-                    fm.writeLog($"Desconectando usuário {user.Client.RemoteEndPoint.ToString()}\n",frmMain.INFO);
-                    user.Client.Close();
+                    fm.WriteLog($"Desconectando usuário {user.Client.RemoteEndPoint.ToString()}\n");
                     if (usuario_errou)
                     {
-                        fm.writeLog($"O usuario {user_data.nome} estava utilizando a calculadora incorretamente\n", frmMain.ERROR);
+                        /* Enviar a ele uma mensagem avisando que ele foi detectado */
+                        byte[] payload;
+                        string json_payload = "{\"connection_blocked\":true}";
+                        payload = Encoding.UTF8.GetBytes(json_payload);
+
+                        userStream.Write(payload, 0, payload.Length);
+                        frmMain.log.Write($"O usuário {user_data.nome} estava utilizando a calculadora incorretamente <==\n");
+                        fm.WriteLog($"O usuário {user_data.nome} estava utilizando a calculadora incorretamente\n");
                         Thread.Sleep(10000);
                     }
+
+                    user.Client.Close();
                     break;
                 }
 
-                if(userStream.CanRead && userStream.DataAvailable)
+                if(userStream.DataAvailable)
                 {
                     try
                     {
-                        memoria.Initialize();
-                        bytes_lidos = userStream.Read(memoria, 0, 512);
+                        bytes_lidos = userStream.Read(memoria, 0, memoria.Length);
 
                         json_request = "";
-                        json_request = Encoding.ASCII.GetString(memoria, 0, bytes_lidos);
+                        json_request = Encoding.UTF8.GetString(memoria,0,bytes_lidos);
+                        int len = json_request.IndexOf("}");
+                        json_request = json_request.Substring(0, len+1);
 
-                        Debug.WriteLine($"Json: {json_request}");
+                        Debug.WriteLine($"Json decodificado: {json_request}");
                         try
                         {
-                            user_data = JsonConvert.DeserializeObject<User>(json_request);
+                            JsonSerializerSettings jss = new JsonSerializerSettings();
+                            jss.Formatting = Formatting.Indented;
+                            jss.CheckAdditionalContent = true;
+
+                            user_data = JsonConvert.DeserializeObject<User>(json_request,jss);
                             user_data.ip = user.Client.RemoteEndPoint.ToString();
 
                             if (!username_showed)
                             {
-                                fm.writeLog($"O Ip do usuario {user_data.nome} é: {user_data.ip}\n", frmMain.INFO);
+                                fm.WriteLog($"O Ip do usuario {user_data.nome} é: {user_data.ip}\n");
                                 username_showed = true;
                             }
 
-                            //fm.addUserToTree(user_data, users - 1);
-                        } catch(Exception e)
-                        {
-                            Debug.WriteLine($"failed to parse json request: {e.Message}");
-                        }
+                            // Se chegamos até aqui, então o json enviado está correto
 
-                        // Se chegamos até aqui, então o json enviado está correto
-
-                        if (user_data.modo_aviao == 0 || user_data.bluetooth == 1 || user_data.saiu == 1)
-                        {
-                            // Usuário está utilizando a calculadora incorretamente
-                            if (!usuario_errou)
+                            if (user_data.modo_aviao == 0 || user_data.bluetooth == 1 || user_data.saiu == 1)
                             {
-                                frmMain.log.Write($"O usuário {user_data.nome} ({user_data.serial}, {user_data.ip}) está utilizando a calculadora incorretamente.\n");
-                                if(user_data.modo_aviao == 0)
-                                    frmMain.log.Write($"Razao: {user_data.nome} desligou o modo avião.\n");
-                                else if(user_data.bluetooth == 1)
-                                    frmMain.log.Write($"Razao: {user_data.nome} desligou o bluetooth.\n");
-                                else
-                                    frmMain.log.Write($"Razao: {user_data.nome} saiu da janela do aplicativo.\n");
+                                // Usuário está utilizando a calculadora incorretamente
+                                if (!usuario_errou)
+                                {
+                                    frmMain.log.Write($"O usuário {user_data.nome} ({user_data.serial}, {user_data.ip}) está utilizando a calculadora incorretamente. <==\n");
+                                    if (user_data.modo_aviao == 0)
+                                        frmMain.log.Write($"Razao: {user_data.nome} desligou o modo avião. <==\n");
+                                    else if (user_data.bluetooth == 1)
+                                        frmMain.log.Write($"Razao: {user_data.nome} desligou o bluetooth. <==\n");
+                                    else
+                                        frmMain.log.Write($"Razao: {user_data.nome} saiu da janela do aplicativo. <==\n");
 
-                                // WARNING: se o nome de usuário tiver vírgula, o funcionamento do sistema pode ser comprometido
-                                File.AppendAllText(blacklist_file, $"{clean_ip},{user_data.nome},{user_data.serial}\n");
+                                    // WARNING: se o nome de usuário tiver vírgula, o funcionamento do sistema pode ser comprometido
+                                    File.AppendAllText(blacklist_file, $"{clean_ip},{user_data.nome},{user_data.serial}\n");
 
-                                fm.showBalooonTip("Alerta", $"{user_data.nome} está utilizando a calculadora incorretamente", ToolTipIcon.Warning, 2000);
-                                usuario_errou = true;
+                                    fm.showBalooonTip("Alerta", $"{user_data.nome} está utilizando a calculadora incorretamente", ToolTipIcon.Warning, 2000);
+                                    usuario_errou = true;
+                                }
+
+                                fm.WriteLog($"O usuário {user_data.nome} ({user_data.serial}) está utilizando a calculadora incorretamente. <==\n");
                             }
-							
-                            fm.writeLog($"O usuário {user_data.nome} ({user_data.serial}) está utilizando a calculadora incorretamente.\n", frmMain.ERROR);
+                        } catch(Exception jse)
+                        {
+                            Debug.WriteLine($"Erro: {jse.Message}");
                         }
+
                     } catch(IOException IOE)
                     {
                         Debug.WriteLine($"Erro ao ler dados:\n\n{IOE.Message}\n");
                         frmMain.log.Write($"Erro ao ler dados:\n\n{IOE.Message}\n");
                     }
                 }
-                Thread.Sleep(2000);
+                Thread.Sleep(5000);
             }
 
             users--;
-            fm.writeLog($"O usuário {user_data.nome} foi desconectado\n", frmMain.WARNING);
+            fm.WriteLog($"O usuário {user_data.nome} foi desconectado\n");
         }
 		
         private string getIpFromRemoteEndPointString(string rmt = "")
@@ -258,6 +288,29 @@ namespace CalcNetServer
 
             index = rmt.IndexOf(':');
             return (rmt.Substring(0, index));
+        }
+
+        public static bool isConnectedToInternet()
+        {
+            Ping ping = new Ping();
+            bool ok = true;
+
+            try
+            {
+                PingReply pr = ping.Send("www.google.com.br");
+                if (pr.Status == IPStatus.Success)
+                    ok = true;
+                else
+                    ok = false;
+
+            } catch(PingException e)
+            {
+                Logger logger = new Logger(true);
+                logger.WriteStackTrace(e);
+                ok = false;
+            }
+
+            return ok;
         }
     }
 }

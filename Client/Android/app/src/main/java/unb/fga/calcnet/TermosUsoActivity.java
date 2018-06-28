@@ -17,11 +17,12 @@ import android.view.View;
 import android.content.Intent;
 import android.graphics.Point;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 public class TermosUsoActivity extends Activity
 {
     private Button botaoSim, botaoNao;
-    private ConstraintLayout mainLayout;
+    private LinearLayout mainLayout;
     private Point size;
     private DisplayMetrics displayMetrics;
     private String dpi_type;

@@ -38,8 +38,8 @@
     <string name="fecha_parentese">)</string>
     <string name="abre_parentese">(</string>
     <string name="porcento">%</string>
-    <string name="logaritmo">log(x)</string>
-    <string name="logaritmo_neperiano">ln(x)</string>
+    <string name="logaritmo">log</string>
+    <string name="logaritmo_neperiano">ln</string>
     <string name="nome_sim">Sim</string>
     <string name="nome_nao">Não</string>
     <string name="numero_de_euler">e</string>

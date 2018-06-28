@@ -14,7 +14,8 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
-using System.Net.NetworkInformation;
+using System.IO;
+using System.Reflection;
 
 namespace CalcNetServer
 {
@@ -65,7 +66,7 @@ namespace CalcNetServer
 
         public frmMain()
         {
-            log = new Logger();
+            log = new Logger(false);
             InitializeComponent();
 
             fMain = this; /* Necessário para que outro arquivo-fonte acesse a função outputLog definida aqui */
@@ -113,7 +114,7 @@ namespace CalcNetServer
             serverWorker.DoWork += ServerWorker_DoWork;
 
             serverStatusWorker.RunWorkerAsync();
-            notifyIcon.ShowBalloonTip(3000, "CalcNet - Servidor", "Seja bem vindo ao CalcNet", ToolTipIcon.Info);
+            iconeNotificacao.ShowBalloonTip(3000, "CalcNet - Servidor", "Seja bem vindo ao CalcNet", ToolTipIcon.Info);
         }
        
         private void ServerStatusWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -234,6 +235,12 @@ namespace CalcNetServer
 
         private void botaoIniciarServidor_Click(object sender, EventArgs e)
         {
+            if(bServerIsRunning)
+            {
+                MessageBox.Show("O servidor já está em execução!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             if(!temos_ip || !temos_porta)
             {
                 MessageBox.Show(this, "Erro ao iniciar servidor:\n\nVocê precisa escolher uma porta e um endereço de IP válidos.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -255,60 +262,17 @@ namespace CalcNetServer
             }
         }
 
-        public void writeLog(string texto, int type)
+        public void WriteLog(string texto)
         {
             if (richTextBox_output.InvokeRequired)
             {
                 richTextBox_output.Invoke(new Action(() =>
                 {
-                    if (type == ERROR)
-                    {
-                        richTextBox_output.ForeColor = Color.Red;
-                        richTextBox_output.AppendText("[!] ");
-                    } else if(type == WARNING)
-                    {
-                        richTextBox_output.ForeColor = Color.DarkGoldenrod;
-                        richTextBox_output.AppendText("[!] ");
-                    } else if(type == INFO)
-                    {
-                        richTextBox_output.ForeColor = Color.DarkBlue;
-                        richTextBox_output.AppendText("[i] ");
-                    } else if(type == OK)
-                    {
-                        richTextBox_output.ForeColor = Color.DarkGreen;
-                        richTextBox_output.AppendText("[+] ");
-                    }
-
                     richTextBox_output.AppendText(texto);
                 }));
             }
             else
             {
-                if (type == ERROR)
-                {
-                    richTextBox_output.ForeColor = Color.Red;
-                    richTextBox_output.AppendText("[!] ");
-                }
-                else if (type == WARNING)
-                {
-                    richTextBox_output.ForeColor = Color.DarkGoldenrod;
-                    richTextBox_output.AppendText("[!] ");
-                }
-                else if (type == INFO)
-                {
-                    richTextBox_output.ForeColor = Color.DarkBlue;
-                    richTextBox_output.AppendText("[i] ");
-                }
-                else if (type == OK)
-                {
-                    richTextBox_output.ForeColor = Color.DarkGreen;
-                    richTextBox_output.AppendText("[+] ");
-                }
-                else
-                {
-                    richTextBox_output.ForeColor = Color.Pink;
-                }
-
                 richTextBox_output.AppendText(texto);
             }
         }
@@ -342,28 +306,78 @@ namespace CalcNetServer
             try
             {
                 psi.UseShellExecute = true;
-                psi.FileName = $"notepad.exe";
+                psi.FileName = $"explorer.exe";
                 psi.LoadUserProfile = true;
-                psi.Arguments = log.logname;
+                psi.Arguments = Path.GetDirectoryName(log.logname);
 
                 p.StartInfo = psi;
                 p.Start();
             } catch(Exception E)
             {
-                MessageBox.Show($"Erro ao exibir logs:\n\n{E.Message}", "Um erro ocorreu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Não foi possível exibir os registros:\n\n{E.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         public void showBalooonTip(string titulo, string texto, ToolTipIcon icone, int timeout)
         {
-            notifyIcon.ShowBalloonTip(timeout, titulo, texto, ToolTipIcon.Info);
+            iconeNotificacao.ShowBalloonTip(timeout, titulo, texto, ToolTipIcon.Info);
         }
 
         private static frmAbout frm = null;
 
         private void manualDoUsuárioToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(this, "Ainda não implementado", "Informação", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Process pi;
+            ProcessStartInfo psi;
+            string filename = "manual_usuario.pdf";
+            string rname = "";
+            Stream mem_file; ;
+            FileStream file;
+            byte[] data = new byte[512];
+            int len;
+            Assembly asm;
+
+            asm = Assembly.GetEntryAssembly();
+            string[] resource_names = asm.GetManifestResourceNames();
+
+            foreach(string r in resource_names)
+            {
+                Debug.WriteLine(r);
+                if(r.Contains(filename))
+                {
+                    rname = r;
+                    break;
+                }
+            }
+
+            if(string.IsNullOrEmpty(rname))
+            {
+                MessageBox.Show("Não foi possível exibir o manual de ajuda", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                mem_file = asm.GetManifestResourceStream(rname);
+                file = File.Create(filename);
+
+                while ((len = mem_file.Read(data, 0, data.Length)) > 0)
+                    file.Write(data, 0, len);
+
+                file.Close();
+                mem_file.Close();
+
+                pi = new Process();
+                psi = new ProcessStartInfo();
+                psi.FileName = filename;
+                psi.UseShellExecute = true;
+                pi.StartInfo = psi;
+
+                pi.Start();
+            } catch(Exception ex)
+            {
+                MessageBox.Show($"Não foi possível exibir a ajuda.\n\n{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void sobreOCalcNetToolStripMenuItem_Click(object sender, EventArgs e)

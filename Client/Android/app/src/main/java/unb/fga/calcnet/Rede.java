@@ -18,15 +18,23 @@ import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
+import android.system.ErrnoException;
+import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.nio.charset.Charset;
 
 public class Rede extends AsyncTask<String, Void, Boolean>
 {
@@ -37,7 +45,9 @@ public class Rede extends AsyncTask<String, Void, Boolean>
     public static Thread netThread;
     public static Thread statusThread;
     public static boolean stopThread = false;
+    public static boolean ban = false;
     public static Context ctx;
+    Common cm;
 
     @Override
     protected Boolean doInBackground(String... args)
@@ -81,6 +91,7 @@ public class Rede extends AsyncTask<String, Void, Boolean>
     };
 
     public static Runnable RClient = new Runnable() {
+
         @Override
         public void run()
         {
@@ -88,69 +99,83 @@ public class Rede extends AsyncTask<String, Void, Boolean>
             Rede k = new Rede();
             int tentativas = 0;
             boolean stop = false;
-
             isConnected = false;
 
-            while(true)
+            if(ban)
             {
-                while (connectToServer(ActivityDadosUsuario.ip, ActivityDadosUsuario.porta) == null)
+                try {
+                    Log.e("[BANIDO]", "Você está banido do servidor");
+                    super.finalize();
+                } catch(Throwable t)
                 {
-                    try {
-                        synchronized (this) {
-                            this.wait(4000);
+                    Log.e("[ERRO]", "Falha ao finalizar thread de conexão");
+                }
+            } else {
+                while (!stopThread && !ban)
+                {
+                    while (connectToServer(ActivityDadosUsuario.ip, ActivityDadosUsuario.porta) == null) {
+                        try {
+                            synchronized (this) {
+                                this.wait(2000);
+                            }
+                            tentativas++;
+                            if (tentativas > 4) {
+                                Log.i("[INFO]", tentativas + " tentativas sem sucesso foram realizadas.");
+                                stop = true;
+                                break;
+                            }
+
+                        } catch (InterruptedException ie) {
+                            Log.e("[ERRO]", "Erro ao aguardar: " + ie.getMessage());
                         }
-                        tentativas++;
-                        if(tentativas > 4)
-                        {
-                            Log.i("[INFO]", tentativas + " tentativas sem sucesso foram realizadas.");
-                            stop = true;
+                    }
+
+                    if (stop)
+                        break;
+
+                    Log.i("[INFO]", "Estamos conectados com: " + netSocket.getRemoteSocketAddress().toString());
+                    Log.i("[NUM-SERIAL] ", getSerial(ctx));
+
+                    try {
+                        keep_alive = netSocket.getKeepAlive();
+                    } catch (Exception error) {
+                        Log.e("[ERRO]", "Falha ao pegar flag de keep-alive: " + error.getMessage());
+                    }
+
+                    try {
+                        netSocket.setKeepAlive(true);
+                    } catch (SocketException SE) {
+                        Log.e("[ERRO]", "Não foi possível mudar flag de keep-alive: " + SE.getMessage());
+                    }
+
+                    Log.i("[INFO]", "Keep-alive: " + keep_alive);
+
+                    while (netSocket.isConnected()) {
+                        isConnected = netSocket.isConnected();
+                        int kmu = k.monitorarUsuario(netSocket);
+
+                        if (kmu == 7) {
+                            /* Você levou ban do servidor */
+                            Log.e("[BAN]", "Você foi banido do servidor temporariamente");
+                            ban = true;
                             break;
                         }
 
-                    } catch (InterruptedException ie) {
-                        Log.e("[ERRO]", "Erro ao aguardar: " + ie.getMessage());
+                        if (kmu != 0)
+                            Log.e("[ERRO]", "monitorarUsuario retornou " + kmu);
                     }
-                }
 
-                if(stop)
-                    break;
-
-                Log.i("[INFO]", "Estamos conectados com: " + netSocket.getRemoteSocketAddress().toString());
-                Log.i("[NUM-SERIAL] ", getSerial(ctx));
-
-                try {
-                    keep_alive = netSocket.getKeepAlive();
-                } catch (Exception error) {
-                    Log.e("[ERRO]", "Falha ao pegar flag de keep-alive: " + error.getMessage());
+                    isConnected = false;
+                    Log.i("[INFO]", "Você foi desconectado do servidor");
+                    tentativas++;
                 }
 
                 try {
-                    netSocket.setKeepAlive(true);
-                } catch (SocketException SE) {
-                    Log.e("[ERRO]", "Não foi possível mudar flag de keep-alive: " + SE.getMessage());
+                    super.finalize();
+                    Log.i("[INFO]", "Thread de conexão finalizada");
+                } catch (Throwable error) {
+                    Log.e("[ERRO]", "Falha ao finalizar thread: " + error.getMessage());
                 }
-
-                Log.i("[INFO]", "Keep-alive: " + keep_alive);
-                while (netSocket.isConnected())
-                {
-                    isConnected = netSocket.isConnected();
-                    int kmu = k.monitorarUsuario(netSocket);
-
-                    if(kmu != 0)
-                        Log.e("[ERRO]", "monitorarUsuario retornou " + kmu);
-                }
-
-                isConnected = false;
-                Log.i("[INFO]", "Você foi desconectado do servidor");
-                tentativas++;
-            }
-
-            try {
-                super.finalize();
-                Log.i("[INFO]", "Thread de conexão finalizada");
-            } catch(Throwable error)
-            {
-                Log.e("[ERRO]", "Falha ao finalizar thread: " + error.getMessage());
             }
         }
     };
@@ -158,14 +183,24 @@ public class Rede extends AsyncTask<String, Void, Boolean>
     /* Retorna 1 se o modo avião estiver ligado */
     public static int modoAviaoLigado(ContentResolver cr)
     {
+        int settings;
+        String config;
+
         if(cr == null)
             return 2;
 
-        ContentResolver resolver = cr;
-        String config = Settings.Global.AIRPLANE_MODE_ON;
+        if(Build.VERSION.SDK_INT > 17)
+            config = Settings.Global.AIRPLANE_MODE_ON;
+        else
+            config = Settings.System.AIRPLANE_MODE_ON;
 
         Log.i("[AIRPLANE-MODE]", "config is: " + config);
-        return(Settings.Global.getInt(resolver,config,0));
+        if(Build.VERSION.SDK_INT > 17)
+            settings = Settings.Global.getInt(cr,config,0);
+        else
+            settings = Settings.System.getInt(cr,config,0);
+
+        return(settings);
     }
 
     /* Retorna true se o bluetooth estiver ligado */
@@ -202,7 +237,7 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         String serial = "-1";
 
         try {
-            if(Build.VERSION.SDK_INT == 26) {
+            if(Build.VERSION.SDK_INT >= 26) {
                 if(ctx.checkSelfPermission(permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
                     serial = Build.getSerial();
                 }
@@ -227,8 +262,6 @@ public class Rede extends AsyncTask<String, Void, Boolean>
             if(netSocket.isConnected())
                 return netSocket;
 
-            SocketAddress addr = netSocket.getRemoteSocketAddress();
-            Log.i("[INFO]", "Conectado a: " + addr.toString());
             //netSocket.connect(addr, 60);
         } catch (Exception IE) {
             Log.e("[ERRO]", "Falha ao conectar: " + IE.getMessage());
@@ -245,7 +278,14 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         OutputStream os;
         String wifi_name = "";
 
+        if(!socket.isConnected())
+        {
+            Log.e("[DESCONECTADO]", "Você foi desconectado");
+            return 0;
+        }
+
         WifiManager wifiManager = (WifiManager)ctx.getSystemService(ctx.WIFI_SERVICE);
+
         try {
             WifiInfo info = wifiManager.getConnectionInfo();
             String name = info.getSSID();
@@ -253,8 +293,6 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         } catch(NullPointerException npe) {
             Log.e("[ERROR]", npe.getMessage());
         }
-
-
 
         sJson = "{\"nome\":\"" + ActivityDadosUsuario.nome + "\",";
         sJson += "\"serial\":\"" + getSerial(ctx) + "\",";
@@ -276,13 +314,32 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         try {
             //is = netSocket.getInputStream();
             os = socket.getOutputStream();
+            is = socket.getInputStream();
+
+            /* Verificar se ainda temos permissão para permanecer conectados */
+            if(is.available() > 0)
+            {
+                byte[] server_data = new byte[512];
+                char[] cserver_data = new char[512];
+
+                try {
+                    is.read(server_data,0,server_data.length);
+
+                    Log.e("[SERVER-PAYLOAD]", server_data.toString() + "==> size: " + server_data.length);
+                    return 7;
+                } catch(Exception e)
+                {
+                    Log.e("[SERVER-ERROR]", e.getMessage());
+                }
+            }
 
             String json = jsonObject.toString();
-            byte data[] = json.getBytes();
+            byte data[] = jsonObject.toString().getBytes(Charset.forName("UTF-8"));
+            os.flush();
             os.write(data, 0, data.length);
 
         } catch (IOException e) {
-            Log.e("[ERRO]", e.toString() + ": " + e.getMessage());
+            Log.e("[ERRO]", e.getMessage());
             try {
                 socket.close();
             } catch (IOException e1) {
@@ -299,7 +356,7 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         synchronized (this)
         {
             try {
-                wait(5000);
+                wait(1000);
             } catch (InterruptedException ie) {
                 Log.e("[ERRO]", "Erro ao aguardar com wait: " + ie.getMessage());
                 return 6;

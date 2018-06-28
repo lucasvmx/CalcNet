@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows.Forms;
 using AutoRevision;
 using MetroFramework.Forms;
-using System.Resources;
 using System.Reflection;
 using System.IO;
 

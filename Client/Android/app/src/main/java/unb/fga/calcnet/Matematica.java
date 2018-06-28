@@ -29,46 +29,9 @@ public final class Matematica
             mathExpr = mathExpr.replace(am.getString(R.string.multiplicacao),"*");
             mathExpr = mathExpr.replace(am.getString(R.string.divisao),"/");
             mathExpr = mathExpr.replace(am.getString(R.string.pi), String.valueOf(Matematica.PI));
-            mathExpr = mathExpr.replace(am.getString(R.string.seno), "sin");
+            mathExpr = mathExpr.replace(am.getString(R.string.numero_de_euler),String.valueOf(Matematica.NUMERO_EULER));
 
             return mathExpr;
-        }
-
-        private int countCloseParenthesis()
-        {
-            int count = 0;
-
-            for(char c : mathExpr.toCharArray())
-            {
-                if(c == ')') {
-                    count++;
-                }
-            }
-
-            return count;
-        }
-
-        private int countOpenParenthesis()
-        {
-            int count = 0;
-
-            for(char c : mathExpr.toCharArray())
-            {
-                if(c == '(') {
-                    count++;
-                }
-            }
-
-            return count;
-        }
-
-        public boolean isValid()
-        {
-            boolean condition;
-
-            condition = countOpenParenthesis() == countCloseParenthesis();
-
-            return condition;
         }
     };
 

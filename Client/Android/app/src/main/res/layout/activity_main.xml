@@ -15,7 +15,7 @@
         style="@android:style/Widget.Holo.EditText"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="11"
+        android:layout_weight="10"
         android:background="@drawable/edit_text_background"
         android:cursorVisible="false"
         android:elegantTextHeight="true"
@@ -35,7 +35,7 @@
         android:id="@+id/editTextResult"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="11"
+        android:layout_weight="10"
         android:background="@drawable/edit_text_background"
         android:cursorVisible="false"
         android:enabled="true"
@@ -49,7 +49,6 @@
         android:id="@+id/mainGrid"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_gravity="fill"
         android:layout_weight="75"
         android:animateLayoutChanges="true"
         android:animationCache="true"
@@ -64,19 +63,19 @@
 
         <Button
             android:id="@+id/botao_abre_parentese"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
             android:text="@string/abre_parentese"
-            app:layout_gravity="fill_horizontal"
             app:layout_column="0"
+            app:layout_gravity="fill_horizontal"
             app:layout_row="0" />
 
         <Button
             android:id="@+id/botao_fecha_parentese"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
             android:text="@string/fecha_parentese"
@@ -85,8 +84,8 @@
 
         <Button
             android:id="@+id/botao_x_elevy"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
             android:text="@string/constante_elev_y"
@@ -96,8 +95,8 @@
 
         <Button
             android:id="@+id/botao_xquadrado"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
             android:text="@string/quadrado"
@@ -106,8 +105,8 @@
 
         <Button
             android:id="@+id/botao_log"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
             android:text="@string/logaritmo"
@@ -128,14 +127,14 @@
 
         <Button
             android:id="@+id/botao_raiz"
-            android:layout_width="70dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
             android:text="@string/raiz_quadrada"
             app:layout_column="4"
             app:layout_gravity="fill"
-            app:layout_row="2" />
+            app:layout_row="1" />
 
         <Button
             android:id="@+id/botao_num_euler"
@@ -145,7 +144,7 @@
             android:onClick="OnClick"
             android:text="@string/numero_de_euler"
             android:textAllCaps="false"
-            app:layout_column="1"
+            app:layout_column="2"
             app:layout_gravity="fill_horizontal"
             app:layout_row="3" />
 
@@ -196,7 +195,7 @@
 
         <Button
             android:id="@+id/botao_seno"
-            android:layout_width="70dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
@@ -206,7 +205,7 @@
 
         <Button
             android:id="@+id/botao_cosseno"
-            android:layout_width="72dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
@@ -222,7 +221,8 @@
             android:text="@string/tangente"
             android:textAllCaps="false"
             app:layout_column="4"
-            app:layout_row="1" />
+            app:layout_gravity="fill_horizontal"
+            app:layout_row="2" />
 
         <Button
             android:id="@+id/botao_sete"
@@ -262,7 +262,7 @@
             android:text="@string/divisao"
             app:layout_column="3"
             app:layout_gravity="fill"
-            app:layout_row="3" />
+            app:layout_row="4" />
 
         <Button
             android:id="@+id/botao_quatro"
@@ -286,7 +286,7 @@
 
         <Button
             android:id="@+id/botao_seis"
-            android:layout_width="72dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_green_light"
             android:onClick="OnClick"
@@ -338,7 +338,7 @@
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
             android:text="@string/subtracao"
-            app:layout_gravity="fill" />
+            app:layout_gravity="fill|clip_vertical" />
 
         <Button
             android:id="@+id/botao_zero"
@@ -348,7 +348,6 @@
             android:onClick="OnClick"
             android:text="@string/zero"
             app:layout_column="0"
-            app:layout_gravity="fill"
             app:layout_row="7" />
 
         <Button
@@ -376,7 +375,7 @@
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
             android:text="@string/soma"
-            app:layout_gravity="fill" />
+            app:layout_gravity="fill_horizontal" />
 
         <Button
             android:id="@+id/botao_exp_x"
@@ -395,9 +394,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="OnClick"
-            android:text="ac"
+            android:text="AC"
             app:layout_column="4"
-            app:layout_gravity="fill"
+            app:layout_gravity="fill|clip_vertical"
             app:layout_row="6" />
 
         <Button
@@ -415,7 +414,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="OnClick"
-            android:text="c"
+            android:text="DEL"
             app:layout_column="4"
             app:layout_columnWeight="1"
             app:layout_gravity="fill"
@@ -423,13 +422,13 @@
             app:layout_rowWeight="1" />
 
         <Button
-            android:id="@+id/button99"
+            android:id="@+id/botaoSair"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="OnClick"
-            android:text="uns"
+            android:text="Sair"
             app:layout_column="4"
-            app:layout_gravity="fill"
+            app:layout_gravity="fill_horizontal"
             app:layout_row="7" />
 
         <Button
@@ -442,7 +441,7 @@
             android:textAllCaps="false"
             app:layout_column="3"
             app:layout_gravity="fill"
-            app:layout_row="4" />
+            app:layout_row="3" />
 
         <Button
             android:id="@+id/botao_dez_elevx"
@@ -452,13 +451,13 @@
             android:onClick="OnClick"
             android:text="@string/dez_elev_x"
             android:textAllCaps="false"
-            app:layout_column="2"
+            app:layout_column="0"
             app:layout_gravity="fill"
             app:layout_row="3" />
 
         <Button
             android:id="@+id/botao_raiz_cubica"
-            android:layout_width="70dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
@@ -476,7 +475,7 @@
             android:onClick="OnClick"
             android:text="@string/fatorial"
             android:textAllCaps="false"
-            app:layout_column="0"
+            app:layout_column="1"
             app:layout_gravity="fill"
             app:layout_row="3" />
 
@@ -493,7 +492,7 @@
         android:id="@+id/textView_status"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
+        android:layout_weight="5"
         android:background="@android:color/holo_green_light"
         android:clickable="false"
         android:fontFamily="monospace"
