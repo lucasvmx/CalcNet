@@ -251,11 +251,6 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         String serial = "-1";
 
         try {
-            WifiManager wm = (WifiManager)ctx.getSystemService(Context.WIFI_SERVICE);
-            WifiInfo wi = wm.getConnectionInfo();
-            serial = wi.getMacAddress();
-
-            /*
             if(Build.VERSION.SDK_INT >= 26)
             {
                 if(ctx.checkSelfPermission(permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
@@ -266,7 +261,7 @@ public class Rede extends AsyncTask<String, Void, Boolean>
             }
             else {
                 serial = Build.SERIAL;
-            } */
+            }
         } catch(Exception x)
         {
             Log.e("[ERROR]", x.getMessage());

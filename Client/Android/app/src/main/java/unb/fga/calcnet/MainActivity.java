@@ -88,11 +88,12 @@ public class MainActivity extends Activity implements SensorEventListener
         handler = new Handler();
 
         sensor_manager = (SensorManager)getSystemService(SENSOR_SERVICE);
+
         try {
             sensorProximidade = sensor_manager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         } catch(NullPointerException npe)
         {
-            Log.e("[ERROR]", npe.getMessage());
+            Log.e("[ERRO]", npe.getMessage());
         }
 
         if(Rede.isConnected) {
@@ -109,7 +110,7 @@ public class MainActivity extends Activity implements SensorEventListener
         @Override
         public void run() {
             flag = true;
-            handler.post(this);
+            handler.postDelayed(this,1000);
         }
     };
 
@@ -267,7 +268,8 @@ public class MainActivity extends Activity implements SensorEventListener
                 if(!text.isEmpty()) {
                     text = text.toLowerCase();
                     Log.i("[EXPRESSAO]", text);
-                }
+                } else
+                    break;
 
                 try
                 {
@@ -794,6 +796,7 @@ public class MainActivity extends Activity implements SensorEventListener
                 if(vezes == 0)
                 {
                     Rede.stopThread = true;
+                    vezes = 5;
                     if(Build.VERSION.SDK_INT > 21)
                         finishAndRemoveTask();
                     else
