@@ -57,7 +57,6 @@
             this.ShadowType = MetroFramework.Forms.MetroFormShadowType.AeroShadow;
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.Style = MetroFramework.MetroColorStyle.Green;
             this.Text = "Sobre";
             this.ResumeLayout(false);
 

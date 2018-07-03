@@ -9,6 +9,7 @@ package unb.fga.calcnet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.util.DisplayMetrics;
@@ -18,6 +19,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class TermosUsoActivity extends Activity
 {
@@ -26,6 +28,7 @@ public class TermosUsoActivity extends Activity
     private Point size;
     private DisplayMetrics displayMetrics;
     private String dpi_type;
+    private Common common;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,7 @@ public class TermosUsoActivity extends Activity
         setTitle(autorevision.VCS_BASENAME + " - Termos de uso");
         size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
+        common = new Common(this,this);
 
         botaoSim = findViewById(R.id.botao_sim);
         botaoNao = findViewById(R.id.botao_nao);
@@ -66,7 +70,10 @@ public class TermosUsoActivity extends Activity
         switch(v.getId())
         {
             case R.id.botao_nao:
-                this.finishAndRemoveTask();
+                if(Build.VERSION.SDK_INT >= 21)
+                    this.finishAndRemoveTask();
+                else
+                    finish();
                 break;
 
             case R.id.botao_sim:
@@ -76,14 +83,10 @@ public class TermosUsoActivity extends Activity
                     this.startActivity(i);
                     finish();
                 } else {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                    alert.setTitle("Erro");
                     if(Rede.bluetoothLigado())
-                        alert.setMessage(R.string.msg_bluetooth_off);
+                       common.showMessage(getString(R.string.msg_bluetooth_off), Toast.LENGTH_SHORT);
                     else
-                        alert.setMessage(R.string.msg_modo_aviao_on);
-
-                    alert.show();
+                        common.showMessage(getString(R.string.msg_modo_aviao_on), Toast.LENGTH_SHORT);
                 }
                 break;
         }

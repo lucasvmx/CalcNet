@@ -49,6 +49,7 @@ public class MainActivity extends Activity implements SensorEventListener
     private Sensor sensorProximidade;
     private boolean flag;
     private TextView tvStatus;
+    private static int vezes = 5;
 
     // FIXME: Corrigir funções trigonométricas inversas
     // FIXME: Thread continua rodando mesmo após a activity sair
@@ -155,10 +156,8 @@ public class MainActivity extends Activity implements SensorEventListener
             if(flag)
             {
                 if (se.values[0] == sensorProximidade.getMaximumRange()) {
-                    Log.i("[SENSOR]", "Longe da tela");
                     mudarBrilhoTela(0f);
                 } else {
-                    Log.i("[SENSOR]", "Perto da tela");
                     mudarBrilhoTela(100f);
                 }
 
@@ -178,23 +177,6 @@ public class MainActivity extends Activity implements SensorEventListener
             tvStatus.setText("VOCÊ FOI BANIDO");
             tvStatus.setBackgroundColor(Color.CYAN);
             tvStatus.setTextColor(Color.BLACK);
-
-            /*
-            try {
-                synchronized (this) {
-                    wait(4000);
-                }
-            } catch(InterruptedException ie)
-            {
-
-            } finally {
-                if(Build.VERSION.SDK_INT > 21) {
-                    finishAndRemoveTask();
-                } else {
-                    finish();
-                }
-            }
-            */
         }
 
         handler.postDelayed(new Runnable() {
@@ -809,25 +791,22 @@ public class MainActivity extends Activity implements SensorEventListener
                 break;
 
             case R.id.botaoSair:
-                int vezes = 5;
                 if(vezes == 0)
                 {
+                    Rede.stopThread = true;
                     if(Build.VERSION.SDK_INT > 21)
                         finishAndRemoveTask();
                     else
                         finish();
-
-                    Rede.stopThread = true;
+                } else {
+                    String msg = "Clique mais " + vezes + " vezes para sair do programa";
+                    common.showMessage(msg, Toast.LENGTH_SHORT);
+                    vezes--;
                 }
-
-                String msg = "Clique mais" + vezes + "vezes para sair do programa";
-                common.showMessage(msg,Toast.LENGTH_SHORT);
-                vezes--;
                 break;
 
             default:
                 common.showMessage("Ação ainda não implementada",Toast.LENGTH_SHORT);
-                //common.showMessage("Desculpe", "Esta ação ainda não foi implementada");
         }
     }
 }

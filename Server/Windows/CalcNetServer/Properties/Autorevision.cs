@@ -7,17 +7,17 @@ namespace AutoRevision
         public static string VcsType = "git";
         public static string VcsBasename = "CalcNet";
         public static string VcsUuid = "88b4eb81aed3ae20d73fb66d462366cb0fcc6408";
-        public static string VcsNum = "23";
-        public static string VcsDate = "2018-06-10T08:10:56Z";
-        public static string VcsBranch = "2018-06-10T08:10:56Z";
-        public static string VcsTag = "v0.1-rc2";
-        public static string VcsTagOpenpgp = "C34A16499AD7D7CC958D078727FC1C8A761EB8BD";
+        public static string VcsNum = "26";
+        public static string VcsDate = "2018-06-28T15:30:52Z";
+        public static string VcsBranch = "2018-06-28T15:30:52Z";
+        public static string VcsTag = "v0.1-rc3";
+        public static string VcsTagOpenpgp = "";
         public static string VcsTick = "0";
         public static string VcsExtra = "";
-        public static string VcsActionStamp = "2018-06-10T08:10:56Z!lucas.engen.cc@gmail.com";
-        public static string VcsFullHash = "7c33cfa40f98d60cd32299acb6e80edbb39f37ee";
-        public static string VcsCommitOpenpgp = "C34A16499AD7D7CC958D078727FC1C8A761EB8BD";
-        public static string VcsShortHash = "7c33cfa";
+        public static string VcsActionStamp = "2018-06-28T15:30:52Z!lucas.engen.cc@gmail.com";
+        public static string VcsFullHash = "c9f23ff79fde80c3eaf5eb0f5509f86bbdd74a3f";
+        public static string VcsCommitOpenpgp = "";
+        public static string VcsShortHash = "c9f23ff";
         public static string VcsWcModified = "true";
     }
 }

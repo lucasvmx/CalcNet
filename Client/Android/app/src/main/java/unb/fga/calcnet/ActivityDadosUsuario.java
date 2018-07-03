@@ -59,8 +59,6 @@ public class ActivityDadosUsuario extends Activity
         botaoConectarTitle = botaoConectar.getText().toString();
 
         txPorta.setText("1701");
-        //txIp.setText("192.168.0.3");
-        //txNome.setText("teste");
 
         Rede.ctx = this.getApplicationContext();
         Rede.netThread = new Thread(Rede.RClient);

@@ -74,7 +74,7 @@
 
         <Button
             android:id="@+id/botao_fecha_parentese"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
@@ -110,8 +110,7 @@
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
             android:text="@string/logaritmo"
-            android:textAllCaps="false"
-            app:layout_gravity="fill" />
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/botao_ln"
@@ -122,7 +121,6 @@
             android:text="@string/logaritmo_neperiano"
             android:textAllCaps="false"
             app:layout_column="4"
-            app:layout_gravity="fill"
             app:layout_row="3" />
 
         <Button
@@ -133,7 +131,6 @@
             android:onClick="OnClick"
             android:text="@string/raiz_quadrada"
             app:layout_column="4"
-            app:layout_gravity="fill"
             app:layout_row="1" />
 
         <Button
@@ -158,7 +155,7 @@
             android:text="@string/arcoseno"
             android:textAllCaps="false"
             app:layout_column="0"
-            app:layout_gravity="fill"
+            app:layout_gravity="fill_horizontal"
             app:layout_row="1" />
 
         <Button
@@ -169,7 +166,7 @@
             android:onClick="OnClick"
             android:text="@string/arcocoseno"
             android:textAllCaps="false"
-            app:layout_gravity="fill" />
+            app:layout_gravity="fill_horizontal" />
 
         <Button
             android:id="@+id/botao_arcotangente"
@@ -180,7 +177,7 @@
             android:text="@string/arcotangente"
             android:textAllCaps="false"
             app:layout_column="0"
-            app:layout_gravity="fill"
+            app:layout_gravity="fill_horizontal"
             app:layout_row="2" />
 
         <Button
@@ -191,7 +188,7 @@
             android:onClick="OnClick"
             android:text="@string/pi"
             android:textAllCaps="false"
-            app:layout_gravity="fill" />
+            app:layout_gravity="fill_horizontal" />
 
         <Button
             android:id="@+id/botao_seno"
@@ -201,7 +198,7 @@
             android:onClick="OnClick"
             android:text="@string/seno"
             android:textAllCaps="false"
-            app:layout_gravity="fill" />
+            app:layout_gravity="fill_horizontal" />
 
         <Button
             android:id="@+id/botao_cosseno"
@@ -210,7 +207,8 @@
             android:backgroundTint="@android:color/holo_blue_bright"
             android:onClick="OnClick"
             android:text="@string/cosseno"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            app:layout_gravity="fill_horizontal" />
 
         <Button
             android:id="@+id/botao_tangente"
@@ -221,7 +219,6 @@
             android:text="@string/tangente"
             android:textAllCaps="false"
             app:layout_column="4"
-            app:layout_gravity="fill_horizontal"
             app:layout_row="2" />
 
         <Button
@@ -232,7 +229,7 @@
             android:onClick="OnClick"
             android:text="@string/sete"
             app:layout_column="0"
-            app:layout_gravity="fill"
+            app:layout_gravity="fill_horizontal"
             app:layout_row="4" />
 
         <Button
@@ -242,7 +239,7 @@
             android:backgroundTint="@android:color/holo_green_light"
             android:onClick="OnClick"
             android:text="@string/oito"
-            app:layout_gravity="fill" />
+            app:layout_gravity="fill_horizontal" />
 
         <Button
             android:id="@+id/botao_nove"
@@ -251,7 +248,7 @@
             android:backgroundTint="@android:color/holo_green_light"
             android:onClick="OnClick"
             android:text="@string/nove"
-            app:layout_gravity="fill" />
+            app:layout_gravity="fill_horizontal" />
 
         <Button
             android:id="@+id/botao_divisao"
@@ -261,7 +258,7 @@
             android:onClick="OnClick"
             android:text="@string/divisao"
             app:layout_column="3"
-            app:layout_gravity="fill"
+            app:layout_gravity="fill_horizontal"
             app:layout_row="4" />
 
         <Button
@@ -272,7 +269,7 @@
             android:onClick="OnClick"
             android:text="@string/quatro"
             app:layout_column="0"
-            app:layout_gravity="fill"
+            app:layout_gravity="fill_horizontal"
             app:layout_row="5" />
 
         <Button
@@ -282,7 +279,7 @@
             android:backgroundTint="@android:color/holo_green_light"
             android:onClick="OnClick"
             android:text="@string/cinco"
-            app:layout_gravity="fill" />
+            app:layout_gravity="fill_horizontal" />
 
         <Button
             android:id="@+id/botao_seis"
@@ -290,7 +287,8 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/holo_green_light"
             android:onClick="OnClick"
-            android:text="@string/seis" />
+            android:text="@string/seis"
+            app:layout_gravity="fill_horizontal" />
 
         <Button
             android:id="@+id/botao_multiplicacao"
@@ -300,7 +298,7 @@
             android:onClick="OnClick"
             android:text="@string/multiplicacao"
             android:textAllCaps="false"
-            app:layout_gravity="fill" />
+            app:layout_gravity="fill_horizontal" />
 
         <Button
             android:id="@+id/botao_um"
@@ -320,7 +318,8 @@
             android:backgroundTint="@android:color/holo_green_light"
             android:onClick="OnClick"
             android:text="@string/dois"
-            app:layout_gravity="fill" />
+            app:layout_column="1"
+            app:layout_row="6" />
 
         <Button
             android:id="@+id/botao_tres"
@@ -386,7 +385,7 @@
             android:text="@string/potencia_e"
             android:textAllCaps="false"
             app:layout_column="3"
-            app:layout_gravity="fill"
+            app:layout_gravity="fill_horizontal"
             app:layout_row="1" />
 
         <Button
@@ -396,7 +395,6 @@
             android:onClick="OnClick"
             android:text="AC"
             app:layout_column="4"
-            app:layout_gravity="fill|clip_vertical"
             app:layout_row="6" />
 
         <Button
@@ -406,7 +404,6 @@
             android:onClick="OnClick"
             android:text="Rad"
             app:layout_column="4"
-            app:layout_gravity="fill_horizontal"
             app:layout_row="4" />
 
         <Button
@@ -416,10 +413,7 @@
             android:onClick="OnClick"
             android:text="DEL"
             app:layout_column="4"
-            app:layout_columnWeight="1"
-            app:layout_gravity="fill"
-            app:layout_row="5"
-            app:layout_rowWeight="1" />
+            app:layout_row="5" />
 
         <Button
             android:id="@+id/botaoSair"
@@ -428,7 +422,6 @@
             android:onClick="OnClick"
             android:text="Sair"
             app:layout_column="4"
-            app:layout_gravity="fill_horizontal"
             app:layout_row="7" />
 
         <Button
@@ -440,7 +433,7 @@
             android:text="@string/modulo_x"
             android:textAllCaps="false"
             app:layout_column="3"
-            app:layout_gravity="fill"
+            app:layout_gravity="fill_horizontal"
             app:layout_row="3" />
 
         <Button
@@ -452,7 +445,7 @@
             android:text="@string/dez_elev_x"
             android:textAllCaps="false"
             app:layout_column="0"
-            app:layout_gravity="fill"
+            app:layout_gravity="fill_horizontal"
             app:layout_row="3" />
 
         <Button
@@ -464,7 +457,7 @@
             android:text="@string/raiz_cubica"
             android:textAllCaps="false"
             app:layout_column="2"
-            app:layout_gravity="fill"
+            app:layout_gravity="fill_horizontal"
             app:layout_row="1" />
 
         <Button
@@ -476,7 +469,7 @@
             android:text="@string/fatorial"
             android:textAllCaps="false"
             app:layout_column="1"
-            app:layout_gravity="fill"
+            app:layout_gravity="fill_horizontal"
             app:layout_row="3" />
 
         <TextView />

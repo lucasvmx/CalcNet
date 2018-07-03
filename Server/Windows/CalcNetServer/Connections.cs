@@ -148,8 +148,8 @@ namespace CalcNetServer
             Thread.Sleep(500);
 
             clean_ip = getIpFromRemoteEndPointString(user.Client.RemoteEndPoint.ToString());
-            fm.WriteLog($"Usuário conectado: {user.Client.RemoteEndPoint.ToString()}, id {users}\n");
-            frmMain.log.Write($"Usuário conectado: {user.Client.RemoteEndPoint.ToString()}\n");
+            fm.WriteLog($"Usuário conectado: {clean_ip}, id {users}\n");
+            frmMain.log.Write($"Usuário conectado: {clean_ip}\n");
 
             if(File.Exists(blacklist_file))
             {
@@ -191,8 +191,8 @@ namespace CalcNetServer
             {
                 if (frmMain.bStopServer || usuario_errou)
                 {
-                    Debug.WriteLine($"Desconectando usuário {user.Client.RemoteEndPoint.ToString()}");
-                    fm.WriteLog($"Desconectando usuário {user.Client.RemoteEndPoint.ToString()}\n");
+                    Debug.WriteLine($"Desconectando usuário {clean_ip}");
+                    fm.WriteLog($"Desconectando usuário {clean_ip}\n");
                     if (usuario_errou)
                     {
                         /* Enviar a ele uma mensagem avisando que ele foi detectado */
@@ -233,7 +233,7 @@ namespace CalcNetServer
 
                             if (!username_showed)
                             {
-                                fm.WriteLog($"O Ip do usuario {user_data.nome} é: {user_data.ip}\n");
+                                fm.WriteLog($"O Ip do usuário {user_data.nome} é: {user_data.ip}\n");
                                 username_showed = true;
                             }
 
@@ -246,11 +246,11 @@ namespace CalcNetServer
                                 {
                                     frmMain.log.Write($"O usuário {user_data.nome} ({user_data.serial}, {user_data.ip}) está utilizando a calculadora incorretamente. <==\n");
                                     if (user_data.modo_aviao == 0)
-                                        frmMain.log.Write($"Razao: {user_data.nome} desligou o modo avião. <==\n");
+                                        frmMain.log.Write($"Razão: {user_data.nome} desligou o modo avião. <==\n");
                                     else if (user_data.bluetooth == 1)
                                         frmMain.log.Write($"Razao: {user_data.nome} desligou o bluetooth. <==\n");
                                     else
-                                        frmMain.log.Write($"Razao: {user_data.nome} saiu da janela do aplicativo. <==\n");
+                                        frmMain.log.Write($"Razão: {user_data.nome} saiu da janela do aplicativo. <==\n");
 
                                     // WARNING: se o nome de usuário tiver vírgula, o funcionamento do sistema pode ser comprometido
                                     File.AppendAllText(blacklist_file, $"{clean_ip},{user_data.nome},{user_data.serial}\n");

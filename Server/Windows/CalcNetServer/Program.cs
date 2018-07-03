@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace CalcNetServer
@@ -12,13 +10,31 @@ namespace CalcNetServer
         /// Ponto de entrada principal para o aplicativo.
         /// </summary>
         ///        
+
         [STAThread]
-        static void Main()
+        static void Main(string[] Args)
         {
+            bool bypass = false;
+
+            bypass = true;
+
+            if (Args.Length == 1)
+            {
+                foreach(string arg in Args)
+                {
+                    if(arg == "--developer")
+                    {
+                        bypass = true;
+                        break;
+                    }
+                }
+            }
+
             if (Connections.isConnectedToInternet())
             {
                 MessageBox.Show("Não podemos utilizar esta rede, pois ela possui conexão ativa com a internet", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //return;
+                if(!bypass)
+                    return;
             }
 
             Application.EnableVisualStyles();

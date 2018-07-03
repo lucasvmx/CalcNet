@@ -206,25 +206,39 @@ public class Rede extends AsyncTask<String, Void, Boolean>
     /* Retorna true se o bluetooth estiver ligado */
     public static boolean bluetoothLigado()
     {
-        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothAdapter adapter = null;
+
+        try {
+            adapter = BluetoothAdapter.getDefaultAdapter();
+        } catch(Exception e)
+        {
+            Log.e("[ERROR-BLUETOTH]", e.getMessage());
+        }
+
         if(adapter == null)
             return false;
 
         return(adapter.isEnabled());
     }
 
-    @TargetApi(23)
     public static int wifiLigado(Context ctx)
     {
         ContentResolver cr = ctx.getContentResolver();
+        int mState;
+        String config = "";
 
         if(cr == null)
             return 2;
 
-        ContentResolver resolver = cr;
-        String config = Settings.Global.WIFI_ON;
+        if(Build.VERSION.SDK_INT > 17) {
+            config = Settings.Global.WIFI_ON;
+            mState = Settings.Global.getInt(cr, config, 0);
+        }
+        else {
+            config = Settings.System.WIFI_ON;
+            mState = Settings.System.getInt(cr, config, 0);
+        }
 
-        int mState = Settings.Global.getInt(resolver,config,0);
         Log.v("[wifiLigado]", "int:" + mState);
 
         return mState;
@@ -237,14 +251,22 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         String serial = "-1";
 
         try {
-            if(Build.VERSION.SDK_INT >= 26) {
+            WifiManager wm = (WifiManager)ctx.getSystemService(Context.WIFI_SERVICE);
+            WifiInfo wi = wm.getConnectionInfo();
+            serial = wi.getMacAddress();
+
+            /*
+            if(Build.VERSION.SDK_INT >= 26)
+            {
                 if(ctx.checkSelfPermission(permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
                     serial = Build.getSerial();
+                } else {
+                    Log.e("[ERRO]", "getSerial: failed to get device serial number");
                 }
             }
             else {
                 serial = Build.SERIAL;
-            }
+            } */
         } catch(Exception x)
         {
             Log.e("[ERROR]", x.getMessage());
@@ -300,14 +322,16 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         sJson += "\"bluetooth\":" + ((bluetoothLigado()) ? 1 : 0) + ",";
         sJson += "\"modo_aviao\":" + modoAviaoLigado(ctx.getContentResolver()) + ",";
         sJson += "\"saiu\":" + (MainActivity.MainActivityStopped ? 1:0) + ",";
-        sJson += "\"rede_wifi\":" + ((wifi_name == null) ? "null":wifi_name ) + "}";
+        sJson += "\"rede_wifi\":" + ((wifi_name.isEmpty()) ? "none":"\""+wifi_name+"\"") + "}";
+
+        Log.i("[STRING-JSON]", sJson);
 
         try {
             jsonObject = new JSONObject(sJson);
 
             Log.d("[DEBUG]", "Objeto JSON criado com sucesso: " + jsonObject.toString());
         } catch (JSONException e) {
-            Log.e("[ERRO]", e.getMessage());
+            Log.e("[ERRO-JSON]", e.getMessage());
             return 2;
         }
 
