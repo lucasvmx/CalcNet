@@ -103,57 +103,51 @@ public class ActivityDadosUsuario extends Activity
 
         if(v.getId() == R.id.botaoConectar)
         {
-			if(porta <= 0 || porta > 65535)
-            {
+            if (porta <= 0 || porta > 65535) {
                 txError.setTextColor(Color.RED);
                 txError.setText("Porta de conexão inválida");
                 botaoConectar.setText(botaoConectarTitle);
                 return;
             }
-			
-			if(txPorta.getText().toString() == "") {
-				txError.setTextColor(Color.RED);
-				txError.setText( "Insira um nome de usuario");
-				return;
-			}
-			
+
+            if (txPorta.getText().toString() == "") {
+                txError.setTextColor(Color.RED);
+                txError.setText("Insira um nome de usuario");
+                return;
+            }
+
             botaoConectar.setText("CONECTANDO...");
             try {
-                if(Rede.netThread.getState() == Thread.State.NEW)
+                if (Rede.netThread.getState() == Thread.State.NEW)
                     Rede.execute(Rede.netThread);
                 else
                     Log.i("[INFO]", "Network thread already running");
-            } catch(Exception e)
-            {
+            } catch (Exception e) {
                 Log.e("[ERRO]", e.getMessage());
                 botaoConectar.setText(botaoConectarTitle);
                 return;
             }
 
             /* Aguarda 1 segundo para verificar se estamos conectados */
-            synchronized (this)
-            {
+            synchronized (this) {
                 try {
                     wait(1000);
-                } catch(InterruptedException ie)
-                {
+                } catch (InterruptedException ie) {
                     Log.e("[ERROR]", ie.getMessage());
                 }
             }
 
-            if(!Rede.isConnected)
+            if (!Rede.isConnected)
             {
                 int mWifiState = Rede.wifiLigado(getApplicationContext());
 
-                if(Rede.modoAviaoLigado(getContentResolver()) == Rede.MODO_AVIAO_OFF) {
+                if (Rede.modoAviaoLigado(getContentResolver()) == Rede.MODO_AVIAO_OFF) {
                     common.showMessage("Cuidado", "Conectar-se com o modo avião desligado, fará o CalcNet entender que você está utilizando o software incorretamente.");
                 } else {
-                    if (mWifiState == WifiManager.WIFI_STATE_DISABLED)
-                    {
+                    if (mWifiState == WifiManager.WIFI_STATE_DISABLED) {
                         common.showMessage("Erro", "O wifi está desligado");
-                    } else
-                    {
-                        common.showMessage("Não foi possível conectar-se ao servidor. Tente novamente",Toast.LENGTH_LONG);
+                    } else {
+                        common.showMessage("Não foi possível conectar-se ao servidor. Tente novamente", Toast.LENGTH_LONG);
                     }
                 }
 
@@ -162,6 +156,7 @@ public class ActivityDadosUsuario extends Activity
             }
 
             Intent intent = new Intent(this,MainActivity.class);
+            intent.putExtra("offline_mode",false);
             MainActivity.mainSocket = Rede.netSocket;
             if(Build.VERSION.SDK_INT > 21) {
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());

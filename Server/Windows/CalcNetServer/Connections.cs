@@ -91,6 +91,8 @@ namespace CalcNetServer
                         {
                             usuario = tcpListener.AcceptTcpClient();
 
+                            Debug.WriteLine($"Conexão aceita: {usuario.Client.RemoteEndPoint.ToString()}");
+
                             /* Para cada cliente conectado, é necessário fazer um processamento paralelo */
 
                             Thread sThread = new Thread(unused =>
@@ -123,7 +125,6 @@ namespace CalcNetServer
                         stack.WriteStackTrace(tae);
                     }
                 }
-                Thread.Sleep(1000);
             }
 
             frmMain.bServerIsRunning = false;
@@ -145,7 +146,7 @@ namespace CalcNetServer
             string[] blacklisted_user_data = { "" };
 
             user.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-            Thread.Sleep(500);
+            Thread.Sleep(1000);
 
             clean_ip = getIpFromRemoteEndPointString(user.Client.RemoteEndPoint.ToString());
             fm.WriteLog($"Usuário conectado: {clean_ip}, id {users}\n");
@@ -171,6 +172,7 @@ namespace CalcNetServer
 
             if(blacklisted)
             {
+                Debug.WriteLine($"Usuário na lista negra: {clean_ip}");
                 user.Client.Close();
                 user.Client.Dispose();
                 users--;
@@ -183,6 +185,7 @@ namespace CalcNetServer
 
             if(!userStream.CanRead)
             {
+                Debug.WriteLine($"Canal não permite leitura");
                 MessageBox.Show("Não é possível ler dados por este canal de rede", "Erro crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Thread.CurrentThread.Abort();
             }
@@ -202,7 +205,6 @@ namespace CalcNetServer
 
                         userStream.Write(payload, 0, payload.Length);
                         frmMain.log.Write($"O usuário {user_data.nome} estava utilizando a calculadora incorretamente <==\n");
-                        fm.WriteLog($"O usuário {user_data.nome} estava utilizando a calculadora incorretamente\n");
                         Thread.Sleep(10000);
                     }
 
@@ -212,6 +214,7 @@ namespace CalcNetServer
 
                 if(userStream.DataAvailable)
                 {
+                    Debug.WriteLine($"Data avaiable: {clean_ip}");
                     try
                     {
                         bytes_lidos = userStream.Read(memoria, 0, memoria.Length);
@@ -233,7 +236,7 @@ namespace CalcNetServer
 
                             if (!username_showed)
                             {
-                                fm.WriteLog($"O Ip do usuário {user_data.nome} é: {user_data.ip}\n");
+                                fm.WriteLog($"IP do usuário {user_data.nome}: {clean_ip}\n");
                                 username_showed = true;
                             }
 
@@ -248,7 +251,7 @@ namespace CalcNetServer
                                     if (user_data.modo_aviao == 0)
                                         frmMain.log.Write($"Razão: {user_data.nome} desligou o modo avião. <==\n");
                                     else if (user_data.bluetooth == 1)
-                                        frmMain.log.Write($"Razao: {user_data.nome} desligou o bluetooth. <==\n");
+                                        frmMain.log.Write($"Razao: {user_data.nome} ligou o bluetooth. <==\n");
                                     else
                                         frmMain.log.Write($"Razão: {user_data.nome} saiu da janela do aplicativo. <==\n");
 
@@ -277,6 +280,7 @@ namespace CalcNetServer
 
             users--;
             fm.WriteLog($"O usuário {user_data.nome} foi desconectado\n");
+            Debug.WriteLine($"O IP{clean_ip} foi desconectado\n");
         }
 		
         private string getIpFromRemoteEndPointString(string rmt = "")

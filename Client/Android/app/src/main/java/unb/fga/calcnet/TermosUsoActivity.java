@@ -8,6 +8,7 @@
 package unb.fga.calcnet;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.os.Build;
 import android.os.Bundle;
@@ -88,6 +89,18 @@ public class TermosUsoActivity extends Activity
                     else
                         common.showMessage(getString(R.string.msg_modo_aviao_on), Toast.LENGTH_SHORT);
                 }
+                break;
+
+            case R.id.botao_modo_offline:
+                Intent intent = new Intent(this,MainActivity.class);
+                intent.putExtra("offline_mode",true);
+                if(Build.VERSION.SDK_INT > 21) {
+                    startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+                }
+                else {
+                    startActivity(intent);
+                }
+                finish();
                 break;
         }
     }

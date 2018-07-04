@@ -38,7 +38,7 @@
             android:label="@string/app_name" />
         <activity
             android:name=".ActivityDadosUsuario"
-            android:label="Insira os dados"></activity>
+            android:label="Insira os dados"/>
     </application>
 
 </manifest>

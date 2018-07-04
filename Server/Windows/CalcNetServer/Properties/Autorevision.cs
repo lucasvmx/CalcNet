@@ -7,17 +7,17 @@ namespace AutoRevision
         public static string VcsType = "git";
         public static string VcsBasename = "CalcNet";
         public static string VcsUuid = "88b4eb81aed3ae20d73fb66d462366cb0fcc6408";
-        public static string VcsNum = "27";
-        public static string VcsDate = "2018-07-03T03:49:40Z";
-        public static string VcsBranch = "2018-07-03T03:49:40Z";
+        public static string VcsNum = "28";
+        public static string VcsDate = "2018-07-03T13:23:37Z";
+        public static string VcsBranch = "2018-07-03T13:23:37Z";
         public static string VcsTag = "v0.1-rc3";
         public static string VcsTagOpenpgp = "";
-        public static string VcsTick = "1";
+        public static string VcsTick = "2";
         public static string VcsExtra = "";
-        public static string VcsActionStamp = "2018-07-03T03:49:40Z!lucas.engen.cc@gmail.com";
-        public static string VcsFullHash = "a6a40b0eac0128b943e6f875537aa27c57336968";
+        public static string VcsActionStamp = "2018-07-03T13:23:37Z!lucas.engen.cc@gmail.com";
+        public static string VcsFullHash = "7b59dbdb23c4fab046972d1a88486a81585ebcf4";
         public static string VcsCommitOpenpgp = "";
-        public static string VcsShortHash = "a6a40b0";
+        public static string VcsShortHash = "7b59dbd";
         public static string VcsWcModified = "true";
     }
 }

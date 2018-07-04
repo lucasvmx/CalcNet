@@ -8,35 +8,63 @@
     android:animateLayoutChanges="true"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textViewTermos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="fill"
-        android:layout_weight="80"
-        android:background="@drawable/edit_text_background"
-        android:text="Este software irá monitorar a sua atividade enquanto você o utiliza. Para este fim, o seguinte dados serão coletados:\n\n- Número de série do seu telefone\n- Nome de usuário\n- Endereço IP\n\nO CalcNet coletará algumas informaões periodicamente e enviará ao aplicador de prova para que ele saiba se você realmente está usando a calculadora (em tempo real) .\nPor favor, seja honesto ao utilizar esta ferramenta criada para o nosso benefício (professores e alunos). Evite constrangimentos...\n\nO que você não deve fazer em hipótese alguma:\n- Desligar o wifi enquanto utiliza a calculadora.\n- Desligar o modo avião.\n- Sair do aplicativo.\n- Fornecer um nome de usuário falso\n- Desligar a tela do seu smartphone.\n\nVocê aceita os termos de uso? "
-        android:textAppearance="@style/TextAppearance.AppCompat"
-        android:textColor="@android:color/holo_blue_bright" />
-
-    <Button
-        android:id="@+id/botao_sim"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="fill"
-        android:layout_weight="10"
-        android:onClick="OnClick"
-        android:text="@string/nome_sim"
-        android:textColor="@android:color/holo_blue_bright" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/botao_nao"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="fill"
-        android:layout_weight="10"
-        android:onClick="OnClick"
-        android:text="@string/nome_nao"
-        android:textColor="@android:color/holo_blue_bright" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:ems="10"
+                android:enabled="false"
+                android:fadeScrollbars="true"
+                android:filterTouchesWhenObscured="false"
+                android:fitsSystemWindows="false"
+                android:focusable="auto"
+                android:inputType="textMultiLine"
+                android:singleLine="false"
+                android:soundEffectsEnabled="false"
+                android:text="Este software irá monitorar a sua atividade enquanto você o utiliza. Para este fim, o seguinte dados serão coletados:\n\n- Número de série do seu telefone\n- Nome de usuário\n- Endereço IP\n\nO CalcNet coletará algumas informaões periodicamente e enviará ao aplicador de prova para que ele saiba se você realmente está usando a calculadora (em tempo real) .\nPor favor, seja honesto ao utilizar esta ferramenta criada para o nosso benefício (professores e alunos). Evite constrangimentos...\n\nO que você não deve fazer em hipótese alguma:\n- Desligar o wifi enquanto utiliza a calculadora.\n- Desligar o modo avião.\n- Sair do aplicativo.\n- Fornecer um nome de usuário falso\n- Desligar a tela do seu smartphone.\n\nVocê aceita os termos de uso? "
+                android:textColor="@android:color/holo_blue_bright" />
+
+            <Button
+                android:id="@+id/botao_sim"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="10"
+                android:focusableInTouchMode="true"
+                android:onClick="OnClick"
+                android:soundEffectsEnabled="true"
+                android:text="@string/nome_sim"
+                android:textColor="@android:color/holo_blue_bright" />
+
+            <Button
+                android:id="@+id/botao_nao"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="10"
+                android:onClick="OnClick"
+                android:soundEffectsEnabled="true"
+                android:text="@string/nome_nao"
+                android:textColor="@android:color/holo_blue_bright" />
+
+            <Button
+                android:id="@+id/botao_modo_offline"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="10"
+                android:onClick="OnClick"
+                android:text="Modo offline"
+                android:textColor="@android:color/holo_green_light" />
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

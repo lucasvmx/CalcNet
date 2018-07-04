@@ -90,8 +90,8 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         }
     };
 
-    public static Runnable RClient = new Runnable() {
-
+    public static Runnable RClient = new Runnable()
+    {
         @Override
         public void run()
         {
@@ -293,7 +293,6 @@ public class Rede extends AsyncTask<String, Void, Boolean>
         JSONObject jsonObject;
         InputStream is;
         OutputStream os;
-        String wifi_name = "";
 
         if(!socket.isConnected())
         {
@@ -301,23 +300,12 @@ public class Rede extends AsyncTask<String, Void, Boolean>
             return 0;
         }
 
-        WifiManager wifiManager = (WifiManager)ctx.getSystemService(ctx.WIFI_SERVICE);
-
-        try {
-            WifiInfo info = wifiManager.getConnectionInfo();
-            String name = info.getSSID();
-            wifi_name = name;
-        } catch(NullPointerException npe) {
-            Log.e("[ERROR]", npe.getMessage());
-        }
-
         sJson = "{\"nome\":\"" + ActivityDadosUsuario.nome + "\",";
         sJson += "\"serial\":\"" + getSerial(ctx) + "\",";
         sJson += "\"ip\":\"" + ActivityDadosUsuario.ip + "\",";
         sJson += "\"bluetooth\":" + ((bluetoothLigado()) ? 1 : 0) + ",";
         sJson += "\"modo_aviao\":" + modoAviaoLigado(ctx.getContentResolver()) + ",";
-        sJson += "\"saiu\":" + (MainActivity.MainActivityStopped ? 1:0) + ",";
-        sJson += "\"rede_wifi\":" + ((wifi_name.isEmpty()) ? "none":"\""+wifi_name+"\"") + "}";
+        sJson += "\"saiu\":" + (MainActivity.MainActivityStopped ? 1:0) + "}";
 
         Log.i("[STRING-JSON]", sJson);
 
@@ -330,8 +318,8 @@ public class Rede extends AsyncTask<String, Void, Boolean>
             return 2;
         }
 
-        try {
-            //is = netSocket.getInputStream();
+        try
+        {
             os = socket.getOutputStream();
             is = socket.getInputStream();
 
@@ -339,7 +327,6 @@ public class Rede extends AsyncTask<String, Void, Boolean>
             if(is.available() > 0)
             {
                 byte[] server_data = new byte[512];
-                char[] cserver_data = new char[512];
 
                 try {
                     is.read(server_data,0,server_data.length);
@@ -352,8 +339,7 @@ public class Rede extends AsyncTask<String, Void, Boolean>
                 }
             }
 
-            String json = jsonObject.toString();
-            byte data[] = jsonObject.toString().getBytes(Charset.forName("UTF-8"));
+            byte data[] = jsonObject.toString().getBytes();
             os.flush();
             os.write(data, 0, data.length);
 

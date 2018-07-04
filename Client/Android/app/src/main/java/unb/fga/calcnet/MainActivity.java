@@ -50,6 +50,7 @@ public class MainActivity extends Activity implements SensorEventListener
     private boolean flag;
     private TextView tvStatus;
     private static int vezes = 5;
+    private boolean bOffline;
 
     // FIXME: Corrigir funções trigonométricas inversas
     // FIXME: Thread continua rodando mesmo após a activity sair
@@ -65,6 +66,15 @@ public class MainActivity extends Activity implements SensorEventListener
         setContentView(R.layout.activity_main);
         dv = new DoubleEvaluator();
         common = new Common(this,this);
+
+        Bundle b = getIntent().getExtras();
+        try {
+            bOffline = b.getBoolean("offline_mode");
+            Log.i("[OFFLINE-MODE]", String.valueOf(bOffline));
+        } catch(NullPointerException npe)
+        {
+            Log.e("[ERRO]", npe.getMessage());
+        }
 
         mathText = findViewById(R.id.editText_Math);
         resultText = findViewById(R.id.editTextResult);
@@ -96,13 +106,19 @@ public class MainActivity extends Activity implements SensorEventListener
             Log.e("[ERRO]", npe.getMessage());
         }
 
-        if(Rede.isConnected) {
+        if(bOffline) {
             tv.setTextColor(Color.BLACK);
             tv.setBackgroundColor(getResources().getColor(R.color.holo_green));
-            tvStatus.setText("ONLINE");
+            tvStatus.setText("MODO OFFLINE");
         } else {
-            tvStatus.setBackgroundColor(Color.RED);
-            tvStatus.setText("OFFLINE");
+            if (Rede.isConnected) {
+                tv.setTextColor(Color.BLACK);
+                tv.setBackgroundColor(getResources().getColor(R.color.holo_green));
+                tvStatus.setText("ONLINE");
+            } else {
+                tvStatus.setBackgroundColor(Color.RED);
+                tvStatus.setText("OFFLINE");
+            }
         }
     }
 
@@ -170,61 +186,64 @@ public class MainActivity extends Activity implements SensorEventListener
     @Override
     public void onUserInteraction()
     {
-        handler = new Handler();
-
-        if(Rede.ban)
+        if(!bOffline)
         {
-            Rede.stopThread = true;
-            tvStatus.setText("VOCÊ FOI BANIDO");
-            tvStatus.setBackgroundColor(Color.CYAN);
-            tvStatus.setTextColor(Color.BLACK);
-        }
+            handler = new Handler();
 
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run()
-            {
-                if(Rede.isConnected) {
-                    tv.setTextColor(Color.BLACK);
-                    tv.setBackgroundColor(getResources().getColor(R.color.holo_green));
-                    tv.setText("ONLINE");
-                } else {
-                    tv.setText("OFFLINE");
-                    tv.setBackgroundColor(Color.RED);
-                    tv.setTextColor(Color.WHITE);
-                }
+            if (Rede.ban) {
+                Rede.stopThread = true;
+                tvStatus.setText("VOCÊ FOI BANIDO");
+                tvStatus.setBackgroundColor(Color.CYAN);
+                tvStatus.setTextColor(Color.BLACK);
             }
-        },1000);
+
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (Rede.isConnected) {
+                        tv.setTextColor(Color.BLACK);
+                        tv.setBackgroundColor(getResources().getColor(R.color.holo_green));
+                        tv.setText("ONLINE");
+                    } else {
+                        tv.setText("OFFLINE");
+                        tv.setBackgroundColor(Color.RED);
+                        tv.setTextColor(Color.WHITE);
+                    }
+                }
+            }, 1000);
+        }
     }
 
     @Override
     public void onBackPressed()
     {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(which == AlertDialog.BUTTON_POSITIVE)
-                {
-                    MainActivityStopped  = true;
-                    if(Build.VERSION.SDK_INT > 21)
-                        finishAndRemoveTask();
-                    else
-                        finish();
+        if(!bOffline)
+        {
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (which == AlertDialog.BUTTON_POSITIVE) {
+                        MainActivityStopped = true;
+                        if (Build.VERSION.SDK_INT > 21)
+                            finishAndRemoveTask();
+                        else
+                            finish();
+                    }
                 }
-            }
-        });
-        alert.setNegativeButton("Não", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(which == AlertDialog.BUTTON_NEGATIVE) {
-                    dialog.cancel();
+            });
+            alert.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (which == AlertDialog.BUTTON_NEGATIVE) {
+                        dialog.cancel();
+                    }
                 }
-            }
-        });
-        alert.setTitle("Cuidado");
-        alert.setMessage("Você quer mesmo sair do aplicativo? Isso pode fazer o aplicador de prova zerar a sua nota");
-        alert.show();
+            });
+            alert.setTitle("Cuidado");
+            alert.setMessage("Você quer mesmo sair do aplicativo? Isso pode fazer o aplicador de prova zerar a sua nota");
+            alert.show();
+        }
     }
 
     @Override
@@ -251,17 +270,27 @@ public class MainActivity extends Activity implements SensorEventListener
 
         switch(b.getId())
         {
+            case R.id.botaoSair:
+                if(vezes == 0)
+                {
+                    Rede.stopThread = true;
+                    vezes = 5;
+                    if(Build.VERSION.SDK_INT > 21)
+                        finishAndRemoveTask();
+                    else
+                        finish();
+                } else {
+                    String msg = "Clique mais " + vezes + " vezes para sair do programa";
+                    common.showMessage(msg, Toast.LENGTH_SHORT);
+                    vezes--;
+                }
+                break;
+
             case R.id.botao_divisao:
                 mathText.append(getString(R.string.divisao));
                 break;
 
             case R.id.botao_igual:
-                /* Avaliar expressão matemática e realizar o devido cálculo */
-
-                //text = text.replace(getString(R.string.numero_de_euler),String.valueOf(Matematica.NUMERO_EULER));
-
-                /* Corrigir a expressão matemática */
-
                 text = mathText.getText().toString();
                 text = new Matematica.Expressao(text,this).corrigir();
 
@@ -288,6 +317,7 @@ public class MainActivity extends Activity implements SensorEventListener
                 } catch(IllegalArgumentException iae)
                 {
                     resultText.setText("Expressão não reconhecida");
+                    Log.e("[ERRO]",iae.getMessage());
                 }
                 break;
 
@@ -376,8 +406,8 @@ public class MainActivity extends Activity implements SensorEventListener
                         resultText.setText(String.valueOf(result));
                     } catch(Throwable error)
                     {
-                        resultText.setText("Erro");
-                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
+                        resultText.setText("Expressão não reconhecida");
+                        Log.e("[ERRO]", "Falha ao calcular seno)");
                     }
                 }
                 break;
@@ -404,8 +434,8 @@ public class MainActivity extends Activity implements SensorEventListener
                         resultText.setText(String.valueOf(result));
                     } catch(Throwable error)
                     {
-                        resultText.setText("Erro");
-                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
+                        resultText.setText("Expressão não reconhecida");
+                        Log.e("[ERRO]", "Falha ao calcular cosseno");
                     }
                 }
                 break;
@@ -432,8 +462,8 @@ public class MainActivity extends Activity implements SensorEventListener
                         resultText.setText(String.valueOf(result));
                     } catch(Throwable error)
                     {
-                        resultText.setText("Erro");
-                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
+                        resultText.setText("Expressão não reconhecida");
+                        Log.e("[ERRO]", "Falha ao calcular tangente");
                     }
                 }
                 break;
@@ -535,8 +565,8 @@ public class MainActivity extends Activity implements SensorEventListener
                         }
                     } catch(Throwable error)
                     {
-                        Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
-                        resultText.setText("Erro");
+                        Log.e("[ERRO]", "Falha ao calcular raíz quadrada");
+                        resultText.setText("Expressão não reoonhecida");
                     }
                 }
                 break;
@@ -789,22 +819,6 @@ public class MainActivity extends Activity implements SensorEventListener
                         resultText.setText("Erro");
                         Log.e("[ERRO]", error.getCause().toString() + " : " + error.getMessage());
                     }
-                }
-                break;
-
-            case R.id.botaoSair:
-                if(vezes == 0)
-                {
-                    Rede.stopThread = true;
-                    vezes = 5;
-                    if(Build.VERSION.SDK_INT > 21)
-                        finishAndRemoveTask();
-                    else
-                        finish();
-                } else {
-                    String msg = "Clique mais " + vezes + " vezes para sair do programa";
-                    common.showMessage(msg, Toast.LENGTH_SHORT);
-                    vezes--;
                 }
                 break;
 
