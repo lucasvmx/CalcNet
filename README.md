@@ -61,8 +61,6 @@
 * Lucas Vieira de Jesus -> <lucas.engen.cc@gmail.com>.
 
 ##### Pesquisa de campo e documentação:
-* Christopher Lucas Israel dos Santos -> <dantecreedtutoriais@gmail.com>
-* Andressa de Fátima Araújo Miranda -> <andressaaraujo0505@gmail.com>
 * Marcelo José Gomes Leitão -> <marcelomjgl@hotmail.com>
 * Renan Cristyan Araújo Pinheiro -> <rcristyan9@gmail.com>
 
